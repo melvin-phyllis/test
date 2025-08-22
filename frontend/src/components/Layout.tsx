@@ -71,7 +71,7 @@ export default function Layout({ children }: LayoutProps) {
 
             <div className="flex flex-1 items-center justify-between">
               <h1 className="text-lg font-semibold text-gray-900">
-                AI Agent Prospecting Platform
+                Global AI Prospecting Platform
               </h1>
               
               <div className="flex items-center gap-x-4">
@@ -114,7 +114,7 @@ export default function Layout({ children }: LayoutProps) {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600">
               <Bot className="h-5 w-5 text-white" />
             </div>
-            <span className="text-lg font-semibold text-gray-900">AI Prospecting</span>
+            <span className="text-lg font-semibold text-gray-900">Global Prospecting</span>
           </div>
         </div>
         

@@ -20,19 +20,26 @@ interface FormData {
 }
 
 const AVAILABLE_SECTORS = [
-  'Agriculture',
-  'Banque et Finance',
-  'Commerce et Distribution',
-  'Construction et BTP',
-  'Éducation',
-  'Énergie',
-  'Industrie',
-  'Santé',
-  'Services',
   'Technologie',
+  'Finance et Fintech',
+  'Santé et Medtech',
+  'E-commerce et Retail',
+  'SaaS et Logiciels',
+  'Industrie 4.0',
+  'Automobile',
+  'Immobilier et PropTech',
+  'Énergie Renouvelable',
+  'EdTech et Formation',
+  'Agriculture et AgTech',
   'Télécommunications',
-  'Transport et Logistique',
-  'Tourisme et Hôtellerie'
+  'Transport et Mobilité',
+  'Consulting et Services',
+  'Manufacturing',
+  'Blockchain et Crypto',
+  'Intelligence Artificielle',
+  'Cybersecurité',
+  'Gaming et Entertainment',
+  'Biotechnologie'
 ]
 
 export default function CreateCampaignModal({
@@ -50,7 +57,7 @@ export default function CreateCampaignModal({
     formState: { errors }
   } = useForm<FormData>({
     defaultValues: {
-      target_location: 'Côte d\'Ivoire',
+      target_location: 'France',
       prospect_count: 10
     }
   })
@@ -142,24 +149,84 @@ export default function CreateCampaignModal({
             {/* Target Location */}
             <div>
               <label className="label">
-                Localisation cible
+                Pays/Région cible
               </label>
               <select
                 {...register('target_location')}
                 className="input"
               >
-                <option value="Côte d'Ivoire">Côte d'Ivoire</option>
-                <option value="Abidjan">Abidjan</option>
-                <option value="Bouaké">Bouaké</option>
-                <option value="Yamoussoukro">Yamoussoukro</option>
-                <option value="San Pedro">San Pedro</option>
+                {/* Europe */}
+                <optgroup label="🇪🇺 Europe">
+                  <option value="France">France</option>
+                  <option value="Allemagne">Allemagne</option>
+                  <option value="Royaume-Uni">Royaume-Uni</option>
+                  <option value="Espagne">Espagne</option>
+                  <option value="Italie">Italie</option>
+                  <option value="Pays-Bas">Pays-Bas</option>
+                  <option value="Belgique">Belgique</option>
+                  <option value="Suisse">Suisse</option>
+                  <option value="Autriche">Autriche</option>
+                  <option value="Suède">Suède</option>
+                  <option value="Danemark">Danemark</option>
+                  <option value="Norvège">Norvège</option>
+                  <option value="Portugal">Portugal</option>
+                </optgroup>
+                
+                {/* Amérique du Nord */}
+                <optgroup label="🇺🇸 Amérique du Nord">
+                  <option value="États-Unis">États-Unis</option>
+                  <option value="Canada">Canada</option>
+                  <option value="Mexique">Mexique</option>
+                </optgroup>
+                
+                {/* Asie-Pacifique */}
+                <optgroup label="🌏 Asie-Pacifique">
+                  <option value="Japon">Japon</option>
+                  <option value="Singapour">Singapour</option>
+                  <option value="Australie">Australie</option>
+                  <option value="Nouvelle-Zélande">Nouvelle-Zélande</option>
+                  <option value="Hong Kong">Hong Kong</option>
+                  <option value="Corée du Sud">Corée du Sud</option>
+                  <option value="Inde">Inde</option>
+                  <option value="Malaisie">Malaisie</option>
+                </optgroup>
+                
+                {/* Afrique */}
+                <optgroup label="🌍 Afrique">
+                  <option value="Afrique du Sud">Afrique du Sud</option>
+                  <option value="Nigeria">Nigeria</option>
+                  <option value="Kenya">Kenya</option>
+                  <option value="Maroc">Maroc</option>
+                  <option value="Égypte">Égypte</option>
+                  <option value="Côte d'Ivoire">Côte d'Ivoire</option>
+                  <option value="Ghana">Ghana</option>
+                  <option value="Tunisie">Tunisie</option>
+                </optgroup>
+                
+                {/* Amérique Latine */}
+                <optgroup label="🌎 Amérique Latine">
+                  <option value="Brésil">Brésil</option>
+                  <option value="Argentine">Argentine</option>
+                  <option value="Chili">Chili</option>
+                  <option value="Colombie">Colombie</option>
+                  <option value="Pérou">Pérou</option>
+                </optgroup>
+                
+                {/* Multi-pays */}
+                <optgroup label="🌍 Multi-pays">
+                  <option value="Europe de l'Ouest">Europe de l'Ouest</option>
+                  <option value="Amérique du Nord">Amérique du Nord</option>
+                  <option value="Asie du Sud-Est">Asie du Sud-Est</option>
+                  <option value="Afrique anglophone">Afrique anglophone</option>
+                  <option value="Afrique francophone">Afrique francophone</option>
+                </optgroup>
               </select>
             </div>
 
             {/* Target Sectors */}
             <div>
               <label className="label">
-                Secteurs cibles (optionnel)
+                Secteurs d'activité cibles (optionnel)
               </label>
               <div className="mt-2 grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border border-gray-200 rounded-md p-3">
                 {AVAILABLE_SECTORS.map((sector) => (
@@ -175,7 +242,7 @@ export default function CreateCampaignModal({
                 ))}
               </div>
               <p className="mt-1 text-sm text-gray-500">
-                {selectedSectors.length} secteur(s) sélectionné(s)
+                {selectedSectors.length} secteur(s) sélectionné(s) - Les agents IA s'adapteront au marché local
               </p>
             </div>
 

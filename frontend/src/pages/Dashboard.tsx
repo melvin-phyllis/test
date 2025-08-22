@@ -43,8 +43,8 @@ export default function Dashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">Vue d'ensemble de votre activité de prospection</p>
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard Global</h1>
+        <p className="text-gray-600">Vue d'ensemble de vos campagnes de prospection internationale</p>
       </div>
 
       {/* Stats cards */}

@@ -95,8 +95,8 @@ export default function Campaigns() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Campagnes</h1>
-          <p className="text-gray-600">Gérez vos campagnes de prospection</p>
+          <h1 className="text-2xl font-bold text-gray-900">Campagnes Internationales</h1>
+          <p className="text-gray-600">Gérez vos campagnes de prospection mondiale</p>
         </div>
         <button
           onClick={() => setIsCreateModalOpen(true)}

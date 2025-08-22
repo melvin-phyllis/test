@@ -1,6 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import path from 'path'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export default defineConfig({
   plugins: [react()],
@@ -8,23 +12,12 @@ export default defineConfig({
     alias: { '@': path.resolve(__dirname, './src') },
   },
   server: {
-    port: 3000,
-    strictPort: true, // évite que Vite bascule tout seul sur 3001
+    port: 3001,
+    strictPort: true,
     proxy: {
-      // API FastAPI (HTTP). Mets ws:true si un jour tu fais des WS sous /api
-      '/api': {
-        target: 'http://localhost:8000',
-        changeOrigin: true,
-        // ws: true,
-      },
-      // WebSocket FastAPI (tes endpoints /ws et /ws/:campaign_id)
-      '/ws': {
-        target: 'http://localhost:8000', // http suffit, ws sera upgradé
-        ws: true,
-        changeOrigin: true,
-      },
-      // (optionnel) si ton front appelle /health directement
-      // '/health': { target: 'http://localhost:8000', changeOrigin: true },
+      '/api': { target: 'http://localhost:8000', changeOrigin: true },
+      '/ws':  { target: 'http://localhost:8000', ws: true, changeOrigin: true },
+      '/health': { target: 'http://localhost:8000', changeOrigin: true }, // ← active
     },
   },
 })

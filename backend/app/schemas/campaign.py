@@ -6,7 +6,7 @@ from app.models.campaign import CampaignStatus
 class CampaignBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     product_description: str = Field(..., min_length=10)
-    target_location: str = Field(default="Côte d'Ivoire")
+    target_location: str = Field(default="France")
     target_sectors: List[str] = Field(default_factory=list)
     prospect_count: int = Field(default=10, ge=1, le=100)
 

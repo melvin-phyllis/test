@@ -101,9 +101,9 @@ export default function Prospects() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Prospects</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Prospects Internationaux</h1>
           <p className="text-gray-600">
-            {filteredProspects.length} prospect(s) trouvé(s)
+            {filteredProspects.length} prospect(s) trouvé(s) dans le monde entier
           </p>
         </div>
         <button

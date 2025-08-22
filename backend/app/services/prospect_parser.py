@@ -75,13 +75,13 @@ class ProspectParser:
         """Extract company information from free text"""
         prospects = []
         
-        # Look for common Ivorian company patterns
+        # Look for international company patterns
         company_patterns = [
-            r'([A-Z][A-Za-z\s&]+(?:Côte d\'Ivoire|CI|SARL|SA|SAS))',
-            r'(Bank of [A-Z][A-Za-z\s]+)',
-            r'([A-Z][A-Za-z\s]+(?:Telecom|Digital|Solutions|Services))',
-            r'(CFAO[A-Za-z\s]*)',
-            r'(Orange[A-Za-z\s]*)'
+            r'([A-Z][A-Za-z\s&]+(?:Ltd|Limited|Inc|Corp|GmbH|SA|SAS|SARL|AG|SpA|BV))',
+            r'([A-Z][A-Za-z\s]+(?:Bank|Banking|Financial|Finance))',
+            r'([A-Z][A-Za-z\s]+(?:Telecom|Digital|Solutions|Services|Technology|Tech))',
+            r'([A-Z][A-Za-z\s]+(?:Group|Holdings|International|Global))',
+            r'([A-Z][A-Za-z\s]+(?:Systems|Software|Consulting|Partners))'
         ]
         
         found_companies = set()
@@ -107,25 +107,31 @@ class ProspectParser:
         """Basic extraction as fallback"""
         prospects = []
         
-        # Sample companies for demonstration
+        # Sample international companies for demonstration
         sample_companies = [
             {
-                "company_name": "Orange Côte d'Ivoire",
-                "sector": "Télécommunications",
-                "location": "Abidjan, Plateau",
-                "website": "www.orange.ci"
+                "company_name": "Microsoft France",
+                "sector": "Technology/Software",
+                "location": "Paris, France",
+                "website": "www.microsoft.fr"
             },
             {
-                "company_name": "Bank of Africa CI",
-                "sector": "Services financiers",
-                "location": "Abidjan, Plateau", 
-                "website": "www.boa.ci"
+                "company_name": "SAP Deutschland",
+                "sector": "Enterprise Software",
+                "location": "Walldorf, Germany",
+                "website": "www.sap.de"
             },
             {
-                "company_name": "CFAO Côte d'Ivoire",
-                "sector": "Distribution",
-                "location": "Abidjan, Zone Industrielle",
-                "website": "www.cfao.ci"
+                "company_name": "Shopify Inc.",
+                "sector": "E-commerce Platform",
+                "location": "Ottawa, Canada",
+                "website": "www.shopify.com"
+            },
+            {
+                "company_name": "BNP Paribas",
+                "sector": "Banking/Finance",
+                "location": "Paris, France",
+                "website": "www.bnpparibas.com"
             }
         ]
         
@@ -149,7 +155,7 @@ class ProspectParser:
             "company_name": company_name,
             "quality_score": 5.0,
             "status": "identified",
-            "location": "Côte d'Ivoire"
+            "location": "Non spécifié"
         }
         
         # Extract website
@@ -194,10 +200,20 @@ class ProspectParser:
             if match:
                 prospect[field] = match.group(1 if match.groups() else 0).strip()
         
-        # Extract location if more specific than default
-        location_match = re.search(r'(?:Abidjan|Bouaké|Yamoussoukro|San Pedro)[^,\n]*', details, re.IGNORECASE)
-        if location_match:
-            prospect['location'] = location_match.group(0).strip()
+        # Extract location - look for international locations
+        location_patterns = [
+            r'(?:Paris|London|Berlin|Madrid|Rome|Amsterdam|Brussels|Zurich|Vienna|Stockholm)[^,\n]*',
+            r'(?:New York|Toronto|Montreal|Los Angeles|Chicago|Boston)[^,\n]*',
+            r'(?:Tokyo|Singapore|Hong Kong|Sydney|Mumbai|Dubai)[^,\n]*',
+            r'(?:Johannesburg|Lagos|Nairobi|Casablanca|Cairo)[^,\n]*',
+            r'([A-Z][a-z]+,\s*[A-Z][a-z]+)'
+        ]
+        
+        for pattern in location_patterns:
+            location_match = re.search(pattern, details, re.IGNORECASE)
+            if location_match:
+                prospect['location'] = location_match.group(0).strip()
+                break
         
         return prospect
     
@@ -217,7 +233,7 @@ class ProspectParser:
         
         # Optional fields with defaults
         cleaned['sector'] = str(prospect.get('sector', 'Non spécifié')).strip()
-        cleaned['location'] = str(prospect.get('location', 'Côte d\'Ivoire')).strip()
+        cleaned['location'] = str(prospect.get('location', 'Non spécifié')).strip()
         cleaned['description'] = str(prospect.get('description', '')).strip()
         cleaned['website'] = str(prospect.get('website', '')).strip()
         

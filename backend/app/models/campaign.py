@@ -18,7 +18,7 @@ class Campaign(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False)
     product_description = Column(Text, nullable=False)
-    target_location = Column(String(255), default="Côte d'Ivoire")
+    target_location = Column(String(255), default="France")
     target_sectors = Column(JSON, default=list)
     prospect_count = Column(Integer, default=10)
     status = Column(SQLEnum(CampaignStatus), default=CampaignStatus.PENDING)

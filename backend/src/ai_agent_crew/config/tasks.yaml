@@ -37,10 +37,15 @@ prospect_analysis_task:
     4. Analyser leur présence en ligne (LinkedIn, réseaux sociaux)
     5. Évaluer le niveau de priorité de chaque prospect (score de 1 à 10)
     
-    Utiliser toutes les sources disponibles: sites web, réseaux sociaux, annuaires professionnels,
-    pages jaunes ivoiriennes, LinkedIn, etc.
+    Utiliser toutes les sources disponibles selon la localisation:
+    - Sites web d'entreprises et pages "À propos" / "Contact"
+    - LinkedIn et autres réseaux sociaux professionnels
+    - Annuaires d'entreprises locaux (pages jaunes, chambres de commerce)
+    - Sources spécialisées par pays (Crunchbase, Bloomberg, registres nationaux)
+    - Moteurs de recherche avec requêtes géolocalisées
     
-    IMPORTANT: Fournir uniquement des informations vérifiables et des contacts réels.
+    IMPORTANT: Adapter les sources selon le pays et fournir uniquement 
+    des informations vérifiables et des contacts réels.
   expected_output: >
     Pour chaque entreprise, un profil complet incluant:
     - Informations détaillées sur l'entreprise
@@ -63,12 +68,17 @@ content_creation_task:
     
     Le contenu doit être:
     - Personnalisé pour le secteur et l'entreprise
-    - Adapté au marché ivoirien (références locales, langage approprié)
-    - Professionnel mais accessible
+    - Adapté au marché local (références culturelles, langage approprié)
+    - Respectueux des codes professionnels du pays
+    - Professionnel mais accessible selon la culture locale
     - Orienté bénéfices pour le prospect
     
     Inclure des références au contexte économique local et aux défis spécifiques 
-    des entreprises en Côte d'Ivoire.
+    des entreprises dans la région ciblée. Adapter le ton et le style selon:
+    - Culture d'affaires locale (formelle/informelle)
+    - Langue préférée (français, anglais, espagnol, etc.)
+    - Références économiques et politiques pertinentes
+    - Horaires et méthodes de contact préférés
   expected_output: >
     Pour chaque prospect, un kit commercial complet contenant:
     - Email d'approche personnalisé

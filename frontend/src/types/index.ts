@@ -42,7 +42,7 @@ export interface Prospect {
   contact_position?: string
   email?: string
   phone?: string
-  whatsapp?: string
+  linkedin?: string
   quality_score: number
   status: string
   created_at: string

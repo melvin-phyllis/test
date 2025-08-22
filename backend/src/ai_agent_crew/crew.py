@@ -6,9 +6,9 @@ import os
 from typing import Dict, Any
 
 from .tools.custom_tool import (
-    IvorianBusinessSearchTool, 
+    GlobalBusinessSearchTool, 
     ContactFinderTool, 
-    MarketAnalysisTool
+    GlobalMarketAnalysisTool
 )
 
 @CrewBase
@@ -20,9 +20,9 @@ class AiAgentCrew():
     
     def __init__(self):
         # Initialize custom tools
-        self.business_search_tool = IvorianBusinessSearchTool()
+        self.business_search_tool = GlobalBusinessSearchTool()
         self.contact_finder_tool = ContactFinderTool()
-        self.market_analysis_tool = MarketAnalysisTool()
+        self.market_analysis_tool = GlobalMarketAnalysisTool()
         
         # Initialize web search tools if API keys available
         self.web_tools = []
@@ -146,9 +146,9 @@ class ProspectingCrewManager:
                 raise ValueError(f"Required field '{field}' missing from inputs")
         
         # Set defaults
-        inputs.setdefault('target_location', 'Côte d\'Ivoire')
+        inputs.setdefault('target_location', 'France')
         inputs.setdefault('prospect_count', 10)
-        inputs.setdefault('current_year', '2024')
+        inputs.setdefault('current_year', '2025')
         inputs.setdefault('target_sectors', [])
         
         # Run the crew
@@ -161,14 +161,14 @@ class ProspectingCrewManager:
         """Get information about the crew configuration"""
         return {
             "agents": [
-                "Market Researcher - Identifies potential companies",
-                "Prospecting Specialist - Finds contact information", 
-                "Content Writer - Creates personalized content"
+                "Global Market Researcher - Identifies potential companies worldwide",
+                "International Prospecting Specialist - Finds contact information globally", 
+                "Global Content Writer - Creates personalized content for any market"
             ],
             "tools": [
-                "Ivorian Business Search - Local business directory",
-                "Contact Finder - Contact information lookup",
-                "Market Analysis - Market insights for Côte d'Ivoire",
+                "Global Business Search - International business directory",
+                "Global Contact Finder - Contact information lookup worldwide",
+                "Global Market Analysis - Market insights for any country/region",
                 "Web Search - General web search capabilities"
             ],
             "process": "Sequential execution of tasks",
