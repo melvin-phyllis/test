@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Fiel, ConfigDictd
+from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from app.models.campaign import CampaignStatus
@@ -29,9 +29,9 @@ class CampaignResponse(CampaignBase):
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
     results_summary: Dict[str, Any] = Field(default_factory=dict)
-
     
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True
 
 # Campaign statistics
 class CampaignStats(BaseModel):

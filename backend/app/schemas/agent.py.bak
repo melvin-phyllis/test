@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Fiel, ConfigDictd
+from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any
 from datetime import datetime
 
@@ -25,9 +25,9 @@ class AgentActivityResponse(BaseModel):
     started_at: datetime
     completed_at: Optional[datetime]
     extra_data: Dict[str, Any]
-
     
-    model_config = ConfigDict(from_attributes=True)
+    class Config:
+        from_attributes = True
 
 # Real-time agent status
 class AgentStatus(BaseModel):

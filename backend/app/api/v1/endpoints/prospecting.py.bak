@@ -22,7 +22,7 @@ async def create_campaign(
 ):
     """Create a new prospecting campaign"""
     try:
-        db_campaign = Campaign(**campaign.model_dump())
+        db_campaign = Campaign(**campaign.dict())
         db.add(db_campaign)
         await db.commit()
         await db.refresh(db_campaign)
