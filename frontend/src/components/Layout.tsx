@@ -129,7 +129,7 @@ export default function Layout({ children }: LayoutProps) {
                       <Link
                         to={item.href}
                         className={clsx(
-                          'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold',
+                          'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold relative',
                           isActive
                             ? 'bg-primary-50 text-primary-600'
                             : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50'
@@ -141,7 +141,14 @@ export default function Layout({ children }: LayoutProps) {
                             isActive ? 'text-primary-600' : 'text-gray-400 group-hover:text-primary-600'
                           )}
                         />
-                        {item.name}
+                        <span className="flex items-center gap-2">
+                          {item.name}
+                          {item.badge && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                              {item.badge}
+                            </span>
+                          )}
+                        </span>
                       </Link>
                     </li>
                   )

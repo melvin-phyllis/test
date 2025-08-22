@@ -1,4 +1,5 @@
 import { WebSocketMessage } from '@/types'
+import { useAppStore } from '@/store'
 
 class WebSocketService {
   private ws: WebSocket | null = null
@@ -15,10 +16,12 @@ class WebSocketService {
       this.ws.onopen = () => {
         console.log('WebSocket connected')
         this.reconnectAttempts = 0
+        useAppStore.getState().setWebSocketConnected(true)
       }
 
       this.ws.onclose = () => {
         console.log('WebSocket disconnected')
+        useAppStore.getState().setWebSocketConnected(false)
         this.handleReconnect()
       }
 
@@ -43,6 +46,7 @@ class WebSocketService {
     if (this.ws) {
       this.ws.close()
       this.ws = null
+      useAppStore.getState().setWebSocketConnected(false)
     }
   }
 

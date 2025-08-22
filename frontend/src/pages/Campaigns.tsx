@@ -210,8 +210,10 @@ export default function Campaigns() {
       <CreateCampaignModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        onSubmit={handleCreateCampaign}
-        loading={createCampaignMutation.isLoading}
+        onSuccess={() => {
+          setIsCreateModalOpen(false)
+          toast.success('Campagne créée avec succès')
+        }}
       />
     </div>
   )
