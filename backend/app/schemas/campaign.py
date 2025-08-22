@@ -8,7 +8,7 @@ class CampaignBase(BaseModel):
     product_description: str = Field(..., min_length=10)
     target_location: str = Field(default="France")
     target_sectors: List[str] = Field(default_factory=list)
-    prospect_count: int = Field(default=10, ge=1, le=100)
+    prospect_count: int = Field(default=10, ge=1, le=1000)
 
 class CampaignCreate(CampaignBase):
     config: Optional[Dict[str, Any]] = Field(default_factory=dict)

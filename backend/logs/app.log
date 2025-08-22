@@ -413,3 +413,158 @@ litellm.exceptions.AuthenticationError: litellm.AuthenticationError: Authenticat
 2025-08-22 12:45:40 | INFO | app.main | Global WebSocket client disconnected
 2025-08-22 12:45:40 | INFO | app.services.websocket_manager | Client disconnected from campaign None
 2025-08-22 12:45:40 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 12:54:31 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 12:54:31 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 12:54:31 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 12:54:31 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 12:54:32 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 12:54:32 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 12:54:38 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 12:54:38 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 12:54:38 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 12:54:38 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 12:54:38 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 12:54:38 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 13:37:04 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 13:37:04 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 13:37:04 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 13:37:04 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 13:37:04 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 13:37:04 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 13:37:04 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 13:37:04 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 13:37:04 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 13:37:04 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 13:37:04 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 13:37:04 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 13:37:04 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 13:37:04 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 13:37:04 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 13:37:04 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:38:10 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:38:10 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:39:45 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:39:45 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:39:45 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:39:45 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:39:45 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:39:45 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:39:45 | INFO | app.main | Shutting down...
+2025-08-22 15:39:50 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:39:50 | INFO | app.main | Database initialized
+2025-08-22 15:39:51 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:39:51 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:39:51 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:39:51 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:39:51 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:39:51 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:39:51 | INFO | app.main | Shutting down...
+2025-08-22 15:39:55 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:39:55 | INFO | app.main | Database initialized
+2025-08-22 15:39:57 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:39:57 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:39:57 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:39:57 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:39:57 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:39:57 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:39:58 | INFO | app.main | Shutting down...
+2025-08-22 15:40:02 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:40:02 | INFO | app.main | Database initialized
+2025-08-22 15:40:38 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:40:38 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:40:38 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:40:38 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:40:38 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:40:38 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:40:38 | INFO | app.main | Shutting down...
+2025-08-22 15:41:38 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:41:38 | INFO | app.main | Database initialized
+2025-08-22 15:42:58 | INFO | app.api.v1.endpoints.prospecting | Created campaign 3: melvin akou
+2025-08-22 15:43:06 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:43:06 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:44:20 | INFO | app.api.v1.endpoints.prospecting | Created campaign 4: uvci
+2025-08-22 15:46:02 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:46:02 | INFO | app.main | Database initialized
+2025-08-22 15:48:48 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:48:48 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:48:48 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:48:48 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:48:48 | INFO | app.main | Shutting down...
+2025-08-22 15:48:48 | INFO | app.main | Shutting down...
+2025-08-22 15:48:53 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:48:53 | INFO | app.main | Database initialized
+2025-08-22 15:48:53 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:48:53 | INFO | app.main | Database initialized
+2025-08-22 15:49:39 | INFO | app.main | Shutting down...
+2025-08-22 15:49:45 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:49:45 | INFO | app.main | Database initialized
+2025-08-22 15:49:52 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:49:52 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:50:13 | INFO | app.api.v1.endpoints.prospecting | Created campaign 5: eveve
+2025-08-22 15:52:22 | INFO | app.main | Shutting down...
+2025-08-22 15:54:02 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:54:02 | INFO | app.main | Database initialized
+2025-08-22 15:55:54 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:55:54 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:55:54 | INFO | app.main | Shutting down...
+2025-08-22 15:55:58 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:55:58 | INFO | app.main | Database initialized
+2025-08-22 15:56:34 | INFO | app.api.v1.endpoints.prospecting | Created campaign 6: Test Campaign
+2025-08-22 15:56:56 | INFO | app.api.v1.endpoints.prospecting | Created campaign 7: Large Campaign Test
+2025-08-22 15:57:16 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:57:16 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:58:18 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:58:18 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:58:18 | INFO | app.main | Shutting down...
+2025-08-22 15:58:22 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:58:22 | INFO | app.main | Database initialized
+2025-08-22 15:58:24 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:58:24 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:58:24 | INFO | app.main | Shutting down...
+2025-08-22 15:58:29 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:58:29 | INFO | app.main | Database initialized
+2025-08-22 15:58:31 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:58:31 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:58:31 | INFO | app.main | Shutting down...
+2025-08-22 15:58:35 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:58:35 | INFO | app.main | Database initialized
+2025-08-22 15:58:38 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:58:38 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:58:39 | INFO | app.main | Shutting down...
+2025-08-22 15:58:43 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:58:43 | INFO | app.main | Database initialized
+2025-08-22 15:58:56 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:58:56 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:58:56 | INFO | app.main | Shutting down...
+2025-08-22 15:59:00 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:59:00 | INFO | app.main | Database initialized
+2025-08-22 15:59:08 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:59:08 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:59:08 | INFO | app.main | Shutting down...
+2025-08-22 15:59:12 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:59:12 | INFO | app.main | Database initialized
+2025-08-22 15:59:15 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 15:59:15 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 15:59:15 | INFO | app.main | Shutting down...
+2025-08-22 15:59:20 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 15:59:20 | INFO | app.main | Database initialized
+2025-08-22 16:00:33 | INFO | app.api.v1.endpoints.prospecting | Received campaign data: {'name': "User's API Key", 'product_description': 'vente d(habit de luxe et de chaussure', 'target_location': 'France', 'target_sectors': ['Healthcare'], 'prospect_count': 50, 'config': {}}
+2025-08-22 16:00:33 | INFO | app.api.v1.endpoints.prospecting | Created campaign 8: User's API Key
+2025-08-22 16:04:06 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 16:04:06 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 16:05:42 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 16:05:42 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 16:05:58 | INFO | app.api.v1.endpoints.prospecting | Received campaign data: {'name': "User's API Key", 'product_description': 'vente de produit deriver ', 'target_location': 'France', 'target_sectors': ['Pharmaceuticals'], 'prospect_count': 50, 'config': {}}
+2025-08-22 16:05:58 | INFO | app.api.v1.endpoints.prospecting | Created campaign 9: User's API Key
+2025-08-22 16:07:03 | INFO | app.services.crewai_service | Campaign 9 started successfully
+2025-08-22 16:07:03 | INFO | app.services.crewai_service | Starting background execution for campaign 9
+2025-08-22 16:07:03 | INFO | app.services.crewai_service | Campaign 8 started successfully
+2025-08-22 16:07:03 | INFO | app.services.crewai_service | Starting background execution for campaign 8
+2025-08-22 16:08:53 | INFO | app.services.prospect_parser | Extracted 1 prospects from CrewAI result
+2025-08-22 16:08:53 | INFO | app.services.crewai_service | Processed 1 prospects for campaign 8
+2025-08-22 16:08:53 | INFO | app.services.crewai_service | Campaign 8 completed successfully
+2025-08-22 16:09:53 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 16:09:53 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 16:10:10 | INFO | app.services.prospect_parser | Extracted 1 prospects from CrewAI result
+2025-08-22 16:10:10 | INFO | app.services.crewai_service | Processed 1 prospects for campaign 9
+2025-08-22 16:10:10 | INFO | app.services.crewai_service | Campaign 9 completed successfully

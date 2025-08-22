@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from typing import List, Optional
+from pydantic import ValidationError
 
 from app.core.database import get_db
 from app.schemas.campaign import (
@@ -22,6 +23,7 @@ async def create_campaign(
 ):
     """Create a new prospecting campaign"""
     try:
+        logger.info(f"Received campaign data: {campaign.model_dump()}")
         db_campaign = Campaign(**campaign.model_dump())
         db.add(db_campaign)
         await db.commit()
