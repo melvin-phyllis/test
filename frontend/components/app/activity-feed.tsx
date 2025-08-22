@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useHydration } from "@/hooks/use-hydration"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -55,9 +56,10 @@ const initialActivities: ActivityItem[] = [
 export function ActivityFeed() {
   const [activities, setActivities] = useState<ActivityItem[]>(initialActivities)
   const [isPaused, setIsPaused] = useState(false)
+  const isHydrated = useHydration()
 
   useEffect(() => {
-    if (isPaused) return
+    if (isPaused || !isHydrated) return
 
     const interval = setInterval(() => {
       const newActivity: ActivityItem = {
@@ -78,7 +80,7 @@ export function ActivityFeed() {
     }, 8000)
 
     return () => clearInterval(interval)
-  }, [isPaused])
+  }, [isPaused, isHydrated])
 
   const formatTime = (date: Date) => {
     const now = new Date()

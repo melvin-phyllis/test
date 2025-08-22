@@ -67,8 +67,11 @@ class CrewAIService:
                 )
                 await db.commit()
                 
-                # Create crew manager
-                crew_manager = ProspectingCrewManager()
+                # Create crew manager with WebSocket callback
+                crew_manager = ProspectingCrewManager(
+                    websocket_callback=manager.broadcast_to_campaign,
+                    campaign_id=campaign_id
+                )
                 self.running_campaigns[campaign_id] = crew_manager
                 
                 # Run campaign in background
@@ -76,14 +79,16 @@ class CrewAIService:
                     self._run_campaign_background(campaign_id, crew_manager, inputs)
                 )
                 
-                # Notify via WebSocket
-                await manager.broadcast_to_campaign(campaign_id, {
+                # Notify via WebSocket (both global and campaign-specific)
+                message = {
                     "type": "campaign_status",
                     "campaign_id": campaign_id,
                     "status": "started",
                     "message": "Campaign started successfully",
                     "timestamp": datetime.utcnow().isoformat()
-                })
+                }
+                await manager.broadcast_to_campaign(campaign_id, message)
+                await manager.broadcast(message)  # Also send globally
                 
                 logger.info(f"Campaign {campaign_id} started successfully")
                 
@@ -109,13 +114,15 @@ class CrewAIService:
             logger.info(f"Starting background execution for campaign {campaign_id}")
             
             # Notify start of execution
-            await manager.broadcast_to_campaign(campaign_id, {
+            message = {
                 "type": "campaign_status",
                 "campaign_id": campaign_id,
                 "status": "executing",
                 "message": "AI agents are working...",
                 "timestamp": datetime.utcnow().isoformat()
-            })
+            }
+            await manager.broadcast_to_campaign(campaign_id, message)
+            await manager.broadcast(message)
             
             # Execute the crew
             result = await asyncio.get_event_loop().run_in_executor(
@@ -138,13 +145,15 @@ class CrewAIService:
                 await db.commit()
             
             # Notify completion
-            await manager.broadcast_to_campaign(campaign_id, {
+            message = {
                 "type": "campaign_status",
                 "campaign_id": campaign_id,
                 "status": "completed",
                 "message": "Campaign completed successfully",
                 "timestamp": datetime.utcnow().isoformat()
-            })
+            }
+            await manager.broadcast_to_campaign(campaign_id, message)
+            await manager.broadcast(message)
             
             logger.info(f"Campaign {campaign_id} completed successfully")
             

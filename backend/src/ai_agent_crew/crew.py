@@ -121,8 +121,35 @@ class AiAgentCrew():
 class ProspectingCrewManager:
     """Manager class for easier crew execution"""
     
-    def __init__(self):
+    def __init__(self, websocket_callback=None, campaign_id=None):
         self.crew_instance = AiAgentCrew()
+        self.websocket_callback = websocket_callback
+        self.campaign_id = campaign_id
+        
+    async def send_websocket_message(self, message_type: str, data: Dict[str, Any]):
+        """Send WebSocket message if callback is available"""
+        if self.websocket_callback:
+            try:
+                from datetime import datetime
+                message = {
+                    "type": message_type,
+                    "data": data,
+                    "timestamp": datetime.utcnow().isoformat()
+                }
+                
+                # Send to campaign-specific clients if campaign_id is available
+                if self.campaign_id:
+                    await self.websocket_callback(self.campaign_id, message)
+                
+                # Also send globally - import manager directly
+                try:
+                    from app.services.websocket_manager import manager
+                    await manager.broadcast(message)
+                except Exception as broadcast_error:
+                    print(f"Error broadcasting globally: {broadcast_error}")
+                    
+            except Exception as e:
+                print(f"Error sending WebSocket message: {e}")
         
     def run_prospecting_campaign(self, inputs: Dict[str, Any]) -> str:
         """
@@ -139,6 +166,9 @@ class ProspectingCrewManager:
         Returns:
             String containing the campaign results
         """
+        import asyncio
+        from datetime import datetime
+        
         # Validate inputs
         required_fields = ['product']
         for field in required_fields:
@@ -151,9 +181,53 @@ class ProspectingCrewManager:
         inputs.setdefault('current_year', '2025')
         inputs.setdefault('target_sectors', [])
         
+        # Notify start of prospecting
+        try:
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(self.send_websocket_message("agent_activity", {
+                "agent_name": "Global Market Researcher",
+                "action": "Démarrage de la prospection",
+                "description": f"Recherche de {inputs['prospect_count']} prospects dans {inputs['target_location']}",
+                "status": "started",
+                "campaign_id": self.campaign_id,
+                "timestamp": datetime.utcnow().isoformat()
+            }))
+        except:
+            pass  # Continue even if WebSocket fails
+        
         # Run the crew
         crew = self.crew_instance.crew()
+        
+        # Notify execution start
+        try:
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(self.send_websocket_message("agent_activity", {
+                "agent_name": "Global Market Researcher", 
+                "action": "Analyse du marché",
+                "description": "Analyse des secteurs cibles et identification des entreprises potentielles",
+                "status": "in_progress",
+                "campaign_id": self.campaign_id,
+                "timestamp": datetime.utcnow().isoformat()
+            }))
+        except:
+            pass
+        
         result = crew.kickoff(inputs=inputs)
+        
+        # Notify completion
+        try:
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(self.send_websocket_message("agent_activity", {
+                "agent_name": "Global Business Search",
+                "action": "Prospection terminée",
+                "description": "Analyse terminée et prospects identifiés avec succès",
+                "status": "completed",
+                "campaign_id": self.campaign_id,
+                "result": "Prospects identifiés et validés",
+                "timestamp": datetime.utcnow().isoformat()
+            }))
+        except:
+            pass
         
         return str(result)
     

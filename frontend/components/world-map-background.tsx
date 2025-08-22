@@ -35,7 +35,7 @@ export function WorldMapBackground() {
         />
 
         {/* Hotspots */}
-        {hotspots.map((hotspot) => (
+        {hotspots.map((hotspot, index) => (
           <g key={hotspot.id}>
             <circle
               cx={hotspot.x}
@@ -44,7 +44,7 @@ export function WorldMapBackground() {
               fill="currentColor"
               className="animate-pulse"
               style={{
-                animationDelay: `${Math.random() * 2}s`,
+                animationDelay: `${(index * 0.25) % 2}s`,
                 animationDuration: "3s",
               }}
               onMouseEnter={() => setActiveHotspot(hotspot.id)}
@@ -60,7 +60,7 @@ export function WorldMapBackground() {
               opacity="0.6"
               className="animate-ping"
               style={{
-                animationDelay: `${Math.random() * 2}s`,
+                animationDelay: `${(index * 0.3) % 2}s`,
                 animationDuration: "4s",
               }}
             />

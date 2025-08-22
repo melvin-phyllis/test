@@ -50,7 +50,7 @@ export function WorldMapDashboard() {
           />
 
           {/* Hotspots */}
-          {hotspots.map((hotspot) => (
+          {hotspots.map((hotspot, index) => (
             <g key={hotspot.id}>
               <circle
                 cx={hotspot.x}
@@ -59,7 +59,7 @@ export function WorldMapDashboard() {
                 fill="currentColor"
                 className="text-primary cursor-pointer animate-pulse"
                 style={{
-                  animationDelay: `${Math.random() * 2}s`,
+                  animationDelay: `${(index * 0.25) % 2}s`,
                   animationDuration: "3s",
                 }}
                 onMouseEnter={() => setActiveHotspot(hotspot.id)}
@@ -74,7 +74,7 @@ export function WorldMapDashboard() {
                 strokeWidth="0.3"
                 className="text-primary/60 animate-ping cursor-pointer"
                 style={{
-                  animationDelay: `${Math.random() * 2}s`,
+                  animationDelay: `${(index * 0.3) % 2}s`,
                   animationDuration: "4s",
                 }}
                 onMouseEnter={() => setActiveHotspot(hotspot.id)}

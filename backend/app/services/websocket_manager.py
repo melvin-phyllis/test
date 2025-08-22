@@ -60,6 +60,25 @@ class ConnectionManager:
         for connection in disconnected:
             self.disconnect(connection, campaign_id)
 
+    async def broadcast(self, message: dict):
+        """Broadcast message to all active connections globally"""
+        if not self.active_connections:
+            return
+            
+        connections = self.active_connections.copy()
+        disconnected = []
+        
+        for connection in connections:
+            try:
+                await connection.send_json(message)
+            except Exception as e:
+                logger.error(f"Error sending global message: {e}")
+                disconnected.append(connection)
+        
+        # Clean up disconnected connections
+        for connection in disconnected:
+            self.disconnect(connection)
+
     def get_total_connection_count(self) -> int:
         """Get total number of active connections"""
         return len(self.active_connections)
