@@ -1,6 +1,87 @@
-# Ignorer les environnements virtuels
-venv/
-backend/venv/
-.env
+# =========================
+# Python
+# =========================
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# =========================
+# Environnements virtuels
+# =========================
+venv/
+env/
+ENV/
+backend/venv/
+.venv/
+.pyenv/
+
+# =========================
+# Logs et bases de données
+# =========================
+*.log
+*.sqlite3
+*.db
+
+# =========================
+# Config & secrets
+# =========================
+.env
+*.secret
+*.key
+*.pem
+
+# =========================
+# Pytest / Coverage
+# =========================
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# =========================
+# Jupyter Notebook
+# =========================
+.ipynb_checkpoints
+
+# =========================
+# VSCode / IDE
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Autres fichiers temporaires
+# =========================
+*.DS_Store
+Thumbs.db
