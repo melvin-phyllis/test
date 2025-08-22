@@ -1,0 +1,79 @@
+market_research_task:
+  description: >
+    Effectuer une recherche approfondie pour identifier des entreprises dans {target_location} 
+    qui pourraient bénéficier de ce produit/service: {product}.
+    
+    Votre mission:
+    1. Identifier les secteurs d'activité les plus pertinents pour ce produit/service
+    2. Rechercher des entreprises de taille moyenne (PME) dans ces secteurs
+    3. Analyser leur maturité digitale et leurs besoins potentiels
+    4. Sélectionner les {prospect_count} entreprises les plus prometteuses
+    
+    Secteurs cibles prioritaires (si pertinents): {target_sectors}
+    
+    Pour chaque entreprise identifiée, fournir:
+    - Nom de l'entreprise
+    - Site web (si disponible)
+    - Secteur d'activité
+    - Taille approximative
+    - Localisation précise
+    - Raison pour laquelle cette entreprise serait intéressée par le produit/service
+    
+    Concentrez-vous sur des entreprises réelles et actives en {target_location}.
+  expected_output: >
+    Une liste détaillée de {prospect_count} entreprises prometteuses avec leur profil complet 
+    et l'analyse de leur adéquation avec le produit/service proposé.
+  agent: market_researcher
+
+prospect_analysis_task:
+  description: >
+    Analyser en profondeur chaque entreprise identifiée par le Market Researcher 
+    et trouver les informations de contact des décideurs clés.
+    
+    Pour chaque entreprise de la liste:
+    1. Rechercher des informations détaillées sur l'entreprise
+    2. Identifier les décideurs clés (CEO, Directeur Commercial, Directeur IT, etc.)
+    3. Trouver leurs coordonnées de contact (email professionnel, téléphone, WhatsApp si disponible)
+    4. Analyser leur présence en ligne (LinkedIn, réseaux sociaux)
+    5. Évaluer le niveau de priorité de chaque prospect (score de 1 à 10)
+    
+    Utiliser toutes les sources disponibles: sites web, réseaux sociaux, annuaires professionnels,
+    pages jaunes ivoiriennes, LinkedIn, etc.
+    
+    IMPORTANT: Fournir uniquement des informations vérifiables et des contacts réels.
+  expected_output: >
+    Pour chaque entreprise, un profil complet incluant:
+    - Informations détaillées sur l'entreprise
+    - Contact principal avec nom, poste, email et téléphone
+    - Score de priorité et justification
+    - Stratégie d'approche recommandée
+  agent: prospecting_specialist
+
+content_creation_task:
+  description: >
+    Créer du contenu personnalisé pour l'approche commerciale de chaque prospect 
+    identifié et analysé.
+    
+    Pour chaque prospect:
+    1. Analyser son profil et ses besoins spécifiques
+    2. Rédiger un message d'approche personnalisé (email de premier contact)
+    3. Créer un pitch commercial adapté à son secteur d'activité
+    4. Proposer une stratégie de suivi (séquence de contacts)
+    5. Identifier les arguments de vente les plus pertinents
+    
+    Le contenu doit être:
+    - Personnalisé pour le secteur et l'entreprise
+    - Adapté au marché ivoirien (références locales, langage approprié)
+    - Professionnel mais accessible
+    - Orienté bénéfices pour le prospect
+    
+    Inclure des références au contexte économique local et aux défis spécifiques 
+    des entreprises en Côte d'Ivoire.
+  expected_output: >
+    Pour chaque prospect, un kit commercial complet contenant:
+    - Email d'approche personnalisé
+    - Pitch commercial adapté
+    - Arguments de vente clés
+    - Stratégie de suivi recommandée
+    - Points de personnalisation pour les appels
+  agent: content_writer

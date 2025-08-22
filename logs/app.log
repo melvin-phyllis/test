@@ -1,0 +1,171 @@
+2025-08-22 00:47:22 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 06:28:14 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 06:28:14 | INFO | app.main | Database initialized
+2025-08-22 06:30:44 | INFO | app.main | Shutting down...
+2025-08-22 06:30:45 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 06:30:45 | INFO | app.main | Database initialized
+2025-08-22 06:32:10 | INFO | app.main | Shutting down...
+2025-08-22 06:32:11 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 06:32:11 | INFO | app.main | Database initialized
+2025-08-22 06:32:39 | INFO | app.main | Shutting down...
+2025-08-22 06:32:40 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 06:32:40 | INFO | app.main | Database initialized
+2025-08-22 06:33:03 | INFO | app.main | Shutting down...
+2025-08-22 06:33:04 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 06:33:04 | INFO | app.main | Database initialized
+2025-08-22 06:33:40 | INFO | app.main | Shutting down...
+2025-08-22 06:33:41 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 06:33:41 | INFO | app.main | Database initialized
+2025-08-22 06:34:22 | INFO | app.main | Shutting down...
+2025-08-22 06:34:23 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 06:34:23 | INFO | app.main | Database initialized
+2025-08-22 06:34:36 | INFO | app.main | Shutting down...
+2025-08-22 07:09:33 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 07:09:33 | INFO | app.main | Database initialized
+2025-08-22 07:09:33 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:09:33 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:09:41 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 07:09:41 | INFO | app.main | Database initialized
+2025-08-22 07:11:07 | INFO | app.api.v1.endpoints.prospecting | Created campaign 1: Test Campaign IA
+2025-08-22 07:11:30 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:11:30 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:11:30 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:11:30 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:11:30 | INFO | app.main | Shutting down...
+2025-08-22 07:11:30 | INFO | app.main | Shutting down...
+2025-08-22 07:11:36 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 07:11:36 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 07:11:36 | INFO | app.main | Database initialized
+2025-08-22 07:11:36 | INFO | app.main | Database initialized
+2025-08-22 07:12:00 | INFO | app.services.crewai_service | Campaign 1 started successfully
+2025-08-22 07:12:00 | INFO | app.services.crewai_service | Starting background execution for campaign 1
+2025-08-22 07:12:00 | ERROR | app.services.crewai_service | Campaign 1 failed: 1 validation error for Crew
+verbose
+  Input should be a valid boolean, unable to interpret input [type=bool_parsing, input_value=2, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/bool_parsing
+2025-08-22 07:12:00 | ERROR | app.services.crewai_service | Traceback (most recent call last):
+  File "/home/melvin-akou/Documents/claude/app/services/crewai_service.py", line 121, in _run_campaign_background
+    result = await asyncio.get_event_loop().run_in_executor(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/melvin-akou/Documents/claude/src/ai_agent_crew/crew.py", line 155, in run_prospecting_campaign
+    crew = self.crew_instance.crew()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/melvin-akou/Documents/claude/venv/lib/python3.12/site-packages/crewai/project/utils.py", line 11, in memoized_func
+    cache[key] = func(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/melvin-akou/Documents/claude/venv/lib/python3.12/site-packages/crewai/project/annotations.py", line 112, in wrapper
+    crew = func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/melvin-akou/Documents/claude/src/ai_agent_crew/crew.py", line 107, in crew
+    return Crew(
+           ^^^^^
+  File "/home/melvin-akou/Documents/claude/venv/lib/python3.12/site-packages/pydantic/main.py", line 253, in __init__
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Crew
+verbose
+  Input should be a valid boolean, unable to interpret input [type=bool_parsing, input_value=2, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.11/v/bool_parsing
+
+2025-08-22 07:12:18 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:12:18 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:12:18 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:12:18 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:12:18 | INFO | app.main | Shutting down...
+2025-08-22 07:12:18 | INFO | app.main | Shutting down...
+2025-08-22 07:12:24 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 07:12:24 | INFO | app.main | Database initialized
+2025-08-22 07:12:24 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-22 07:12:24 | INFO | app.main | Database initialized
+2025-08-22 07:12:53 | INFO | app.services.crewai_service | Campaign 1 started successfully
+2025-08-22 07:12:53 | INFO | app.services.crewai_service | Starting background execution for campaign 1
+2025-08-22 07:13:34 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:13:34 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:15:38 | INFO | app.services.prospect_parser | Extracted 1 prospects from CrewAI result
+2025-08-22 07:15:38 | INFO | app.services.crewai_service | Processed 1 prospects for campaign 1
+2025-08-22 07:15:38 | INFO | app.services.crewai_service | Campaign 1 completed successfully
+2025-08-22 07:22:14 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:22:14 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:25:24 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:25:24 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:25:41 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:25:41 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:26:12 | ERROR | app.api.v1.endpoints.prospecting | Error creating campaign: (sqlite3.OperationalError) attempt to write a readonly database
+[SQL: INSERT INTO campaigns (name, product_description, target_location, target_sectors, prospect_count, status, created_at, started_at, completed_at, config, results_summary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('n8n', 'sevice de vente  de tout type de produit', "Côte d'Ivoire", '["Agriculture"]', 10, 'PENDING', '2025-08-22 07:26:12.173013', None, None, '{}', '{}')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-22 07:30:12 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:30:12 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:30:12 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:30:12 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:30:30 | ERROR | app.api.v1.endpoints.prospecting | Error creating campaign: (sqlite3.OperationalError) attempt to write a readonly database
+[SQL: INSERT INTO campaigns (name, product_description, target_location, target_sectors, prospect_count, status, created_at, started_at, completed_at, config, results_summary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('n8n', 'service de prospect ', "Côte d'Ivoire", '["Agriculture"]', 20, 'PENDING', '2025-08-22 07:30:30.902284', None, None, '{}', '{}')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-22 07:37:24 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:37:24 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:37:28 | ERROR | app.api.v1.endpoints.agents | Error getting agent activity: (sqlite3.OperationalError) no such table: agent_activities
+[SQL: SELECT agent_activities.id, agent_activities.campaign_id, agent_activities.agent_name, agent_activities.agent_role, agent_activities.task_name, agent_activities.task_description, agent_activities.status, agent_activities.message, agent_activities.error_message, agent_activities.started_at, agent_activities.completed_at, agent_activities.extra_data 
+FROM agent_activities 
+WHERE agent_activities.campaign_id = ? ORDER BY agent_activities.started_at DESC
+ LIMIT ? OFFSET ?]
+[parameters: (2, 50, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-22 07:37:29 | ERROR | app.api.v1.endpoints.agents | Error getting agent activity: (sqlite3.OperationalError) no such table: agent_activities
+[SQL: SELECT agent_activities.id, agent_activities.campaign_id, agent_activities.agent_name, agent_activities.agent_role, agent_activities.task_name, agent_activities.task_description, agent_activities.status, agent_activities.message, agent_activities.error_message, agent_activities.started_at, agent_activities.completed_at, agent_activities.extra_data 
+FROM agent_activities 
+WHERE agent_activities.campaign_id = ? ORDER BY agent_activities.started_at DESC
+ LIMIT ? OFFSET ?]
+[parameters: (2, 50, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-22 07:37:34 | ERROR | app.api.v1.endpoints.agents | Error getting agent activity: (sqlite3.OperationalError) no such table: agent_activities
+[SQL: SELECT agent_activities.id, agent_activities.campaign_id, agent_activities.agent_name, agent_activities.agent_role, agent_activities.task_name, agent_activities.task_description, agent_activities.status, agent_activities.message, agent_activities.error_message, agent_activities.started_at, agent_activities.completed_at, agent_activities.extra_data 
+FROM agent_activities 
+WHERE agent_activities.campaign_id = ? ORDER BY agent_activities.started_at DESC
+ LIMIT ? OFFSET ?]
+[parameters: (2, 50, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-22 07:37:48 | ERROR | app.api.v1.endpoints.prospecting | Error creating campaign: (sqlite3.OperationalError) no such table: campaigns
+[SQL: INSERT INTO campaigns (name, product_description, target_location, target_sectors, prospect_count, status, created_at, started_at, completed_at, config, results_summary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('n8n', 'inzefzedczedcerrvergververv', "Côte d'Ivoire", '["Commerce et Distribution", "Banque et Finance"]', 10, 'PENDING', '2025-08-22 07:37:48.978566', None, None, '{}', '{}')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-22 07:39:50 | ERROR | app.api.v1.endpoints.prospecting | Error creating campaign: (sqlite3.OperationalError) attempt to write a readonly database
+[SQL: INSERT INTO campaigns (name, product_description, target_location, target_sectors, prospect_count, status, created_at, started_at, completed_at, config, results_summary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('n8n', 'inzefzedczedcerrvergververv', "Côte d'Ivoire", '["Commerce et Distribution", "Banque et Finance"]', 10, 'PENDING', '2025-08-22 07:39:50.001102', None, None, '{}', '{}')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-22 07:39:51 | ERROR | app.api.v1.endpoints.prospecting | Error creating campaign: (sqlite3.OperationalError) attempt to write a readonly database
+[SQL: INSERT INTO campaigns (name, product_description, target_location, target_sectors, prospect_count, status, created_at, started_at, completed_at, config, results_summary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('n8n', 'inzefzedczedcerrvergververv', "Côte d'Ivoire", '["Commerce et Distribution", "Banque et Finance"]', 10, 'PENDING', '2025-08-22 07:39:51.157122', None, None, '{}', '{}')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-22 07:39:53 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:39:53 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:39:54 | ERROR | app.api.v1.endpoints.prospecting | Error listing campaigns: (sqlite3.OperationalError) no such table: campaigns
+[SQL: SELECT campaigns.id, campaigns.name, campaigns.product_description, campaigns.target_location, campaigns.target_sectors, campaigns.prospect_count, campaigns.status, campaigns.created_at, campaigns.started_at, campaigns.completed_at, campaigns.config, campaigns.results_summary 
+FROM campaigns ORDER BY campaigns.created_at DESC
+ LIMIT ? OFFSET ?]
+[parameters: (100, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-22 07:39:54 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 07:39:54 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 07:40:17 | ERROR | app.api.v1.endpoints.prospecting | Error creating campaign: (sqlite3.OperationalError) attempt to write a readonly database
+[SQL: INSERT INTO campaigns (name, product_description, target_location, target_sectors, prospect_count, status, created_at, started_at, completed_at, config, results_summary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('n8n', 'tgfuyblok,jkjnkj jjjjjhh', "Côte d'Ivoire", '["Agriculture"]', 10, 'PENDING', '2025-08-22 07:40:17.113368', None, None, '{}', '{}')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-22 07:41:32 | ERROR | app.api.v1.endpoints.prospecting | Error creating campaign: (sqlite3.OperationalError) no such table: campaigns
+[SQL: INSERT INTO campaigns (name, product_description, target_location, target_sectors, prospect_count, status, created_at, started_at, completed_at, config, results_summary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('n8n', 'tgfuyblok,jkjnkj jjjjjhh', "Côte d'Ivoire", '["Agriculture"]', 10, 'PENDING', '2025-08-22 07:41:32.504985', None, None, '{}', '{}')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-22 08:02:48 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 08:02:48 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 08:02:48 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 08:02:48 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 08:02:48 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 08:02:48 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 08:02:48 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 08:02:48 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 08:02:48 | INFO | app.services.websocket_manager | Client disconnected from campaign None
+2025-08-22 08:02:48 | INFO | app.main | Global WebSocket client disconnected
+2025-08-22 08:02:49 | INFO | app.main | Shutting down...
