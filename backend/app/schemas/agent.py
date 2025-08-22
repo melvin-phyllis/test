@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Fiel, ConfigDictd
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, Dict, Any
 from datetime import datetime
 

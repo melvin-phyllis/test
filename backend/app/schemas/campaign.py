@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Fiel, ConfigDictd
+from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from app.models.campaign import CampaignStatus
