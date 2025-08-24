@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react'
+"use client";
+
+import { useEffect, useState } from "react";
 
 export function useHydration() {
-  const [isHydrated, setIsHydrated] = useState(false)
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setIsHydrated(true)
-  }, [])
+    setHydrated(true);
+  }, []);
 
-  return isHydrated
+  return hydrated;
 }

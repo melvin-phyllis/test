@@ -1,8 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select, func, delete
 from typing import List, Optional
 from pydantic import ValidationError
+import csv
+import io
+import json
+from datetime import datetime
 
 from app.core.database import get_db
 from app.schemas.campaign import (
@@ -83,6 +87,78 @@ async def get_campaign(
         raise
     except Exception as e:
         logger.error(f"Error getting campaign {campaign_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.put("/campaigns/{campaign_id}", response_model=CampaignResponse)
+async def update_campaign(
+    campaign_id: int,
+    campaign_update: CampaignUpdate,
+    db: AsyncSession = Depends(get_db)
+):
+    """Update a campaign"""
+    try:
+        # Check if campaign exists
+        result = await db.execute(
+            select(Campaign).where(Campaign.id == campaign_id)
+        )
+        campaign = result.scalar_one_or_none()
+        
+        if not campaign:
+            raise HTTPException(status_code=404, detail="Campaign not found")
+        
+        # Update campaign fields
+        update_data = campaign_update.model_dump(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(campaign, field, value)
+        
+        await db.commit()
+        await db.refresh(campaign)
+        
+        logger.info(f"Updated campaign {campaign_id}")
+        return campaign
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating campaign {campaign_id}: {str(e)}")
+        await db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/campaigns/{campaign_id}")
+async def delete_campaign(
+    campaign_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    """Delete a campaign"""
+    try:
+        # Check if campaign exists
+        result = await db.execute(
+            select(Campaign).where(Campaign.id == campaign_id)
+        )
+        campaign = result.scalar_one_or_none()
+        
+        if not campaign:
+            raise HTTPException(status_code=404, detail="Campaign not found")
+        
+        # Check if campaign is running
+        if campaign.status == CampaignStatus.RUNNING:
+            raise HTTPException(status_code=400, detail="Cannot delete a running campaign")
+        
+        # Delete associated prospects first
+        await db.execute(delete(Prospect).where(Prospect.campaign_id == campaign_id))
+        
+        # Delete the campaign
+        await db.execute(delete(Campaign).where(Campaign.id == campaign_id))
+        await db.commit()
+        
+        logger.info(f"Deleted campaign {campaign_id}")
+        return {"message": "Campaign deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting campaign {campaign_id}: {str(e)}")
+        await db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/campaigns/{campaign_id}/start")
@@ -199,16 +275,92 @@ async def get_campaign_stats(
         logger.error(f"Error getting stats for campaign {campaign_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/crew/info")
-async def get_crew_info():
-    """Get CrewAI configuration information"""
+@router.get("/campaigns/{campaign_id}/export")
+async def export_campaign(
+    campaign_id: int,
+    format: str = Query("csv", pattern="^(csv|json|xlsx)$"),
+    db: AsyncSession = Depends(get_db)
+):
+    """Export campaign data"""
     try:
-        return crewai_service.get_crew_info()
+        # Check if campaign exists
+        result = await db.execute(
+            select(Campaign).where(Campaign.id == campaign_id)
+        )
+        campaign = result.scalar_one_or_none()
+        
+        if not campaign:
+            raise HTTPException(status_code=404, detail="Campaign not found")
+        
+        # Get campaign prospects
+        prospects_result = await db.execute(
+            select(Prospect).where(Prospect.campaign_id == campaign_id)
+        )
+        prospects = prospects_result.scalars().all()
+        
+        # Prepare data
+        campaign_data = {
+            "campaign": {
+                "id": campaign.id,
+                "name": campaign.name,
+                "product_description": campaign.product_description,
+                "target_location": campaign.target_location,
+                "target_sectors": campaign.target_sectors,
+                "status": campaign.status.value,
+                "created_at": campaign.created_at.isoformat() if campaign.created_at else None,
+                "prospect_count": len(prospects)
+            },
+            "prospects": [
+                {
+                    "id": p.id,
+                    "company_name": p.company_name,
+                    "website": p.website,
+                    "sector": p.sector,
+                    "location": p.location,
+                    "contact_name": p.contact_name,
+                    "contact_position": p.contact_position,
+                    "email": p.email,
+                    "phone": p.phone,
+                    "quality_score": p.quality_score,
+                    "status": p.status,
+                    "created_at": p.created_at.isoformat() if p.created_at else None
+                }
+                for p in prospects
+            ]
+        }
+        
+        if format == "json":
+            content = json.dumps(campaign_data, indent=2, ensure_ascii=False)
+            media_type = "application/json"
+            filename = f"campaign_{campaign_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            
+        elif format == "csv":
+            output = io.StringIO()
+            if prospects:
+                fieldnames = ["company_name", "website", "sector", "location", "contact_name", 
+                             "contact_position", "email", "phone", "quality_score", "status", "created_at"]
+                writer = csv.DictWriter(output, fieldnames=fieldnames)
+                writer.writeheader()
+                for prospect_data in campaign_data["prospects"]:
+                    writer.writerow(prospect_data)
+            content = output.getvalue()
+            media_type = "text/csv"
+            filename = f"campaign_{campaign_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+            
+        else:  # xlsx would require openpyxl, using csv for now
+            raise HTTPException(status_code=400, detail="XLSX format not implemented yet")
+        
+        logger.info(f"Exported campaign {campaign_id} in {format} format")
+        
+        return Response(
+            content=content,
+            media_type=media_type,
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Error getting crew info: {str(e)}")
+        logger.error(f"Error exporting campaign {campaign_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/health")
-async def health_check():
-    """API health check"""
-    return {"status": "healthy", "service": "prospecting"}

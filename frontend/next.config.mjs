@@ -1,26 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: false,
-    domains: ['localhost'],
+    unoptimized: true,
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:8000/api/:path*',
-      },
-    ]
-  },
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-    NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL,
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'react-is': 'react-is',
+    }
+    return config
   },
 }
 

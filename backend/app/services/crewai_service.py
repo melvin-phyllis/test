@@ -10,7 +10,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.ai_agent_crew.crew import ProspectingCrewManager
+from src.ai_agent_crew.dynamic_crew import DynamicProspectingCrewManager
 from app.models.campaign import Campaign, CampaignStatus
 from app.models.prospect import Prospect
 from app.models.agent import AgentActivity
@@ -24,7 +24,7 @@ logger = setup_logger(__name__)
 
 class CrewAIService:
     def __init__(self):
-        self.running_campaigns: Dict[int, ProspectingCrewManager] = {}
+        self.running_campaigns: Dict[int, DynamicProspectingCrewManager] = {}
         self.prospect_parser = ProspectParser()
     
     async def start_campaign(self, campaign_id: int) -> Dict[str, Any]:
@@ -47,13 +47,29 @@ class CrewAIService:
                         "message": "Campaign is already running"
                     }
                 
-                # Prepare inputs for CrewAI
+                # Parse campaign config to determine agent selection
+                campaign_config = campaign.config or {}
+                campaign_type = campaign_config.get('type', 'lead-generation')
+                
+                # Prepare inputs for CrewAI with enhanced configuration
                 inputs = {
                     'product': campaign.product_description,
                     'current_year': str(datetime.now().year),
-                    'target_location': campaign.target_location,
+                    'target_location': campaign.target_location or "Global",
                     'target_sectors': campaign.target_sectors or [],
-                    'prospect_count': campaign.prospect_count
+                    'prospect_count': campaign.prospect_count,
+                    'campaign_type': campaign_type,
+                    'priority': campaign_config.get('priority', 'medium'),
+                    'target_positions': campaign_config.get('targetPositions', []),
+                    'aggressiveness': campaign_config.get('aggressiveness', 50),
+                    'use_serper': campaign_config.get('useSerper', True),
+                    'daily_limit': campaign_config.get('dailyLimit', 20),
+                    'agents_config': campaign_config.get('agents', {
+                        'researcher': True,
+                        'analyst': True, 
+                        'outreach': campaign_type == 'lead-generation',
+                        'followUp': campaign_type == 'lead-generation'
+                    })
                 }
                 
                 # Update campaign status
@@ -68,7 +84,7 @@ class CrewAIService:
                 await db.commit()
                 
                 # Create crew manager with WebSocket callback
-                crew_manager = ProspectingCrewManager(
+                crew_manager = DynamicProspectingCrewManager(
                     websocket_callback=manager.broadcast_to_campaign,
                     campaign_id=campaign_id
                 )
@@ -106,7 +122,7 @@ class CrewAIService:
     async def _run_campaign_background(
         self, 
         campaign_id: int, 
-        crew_manager: ProspectingCrewManager, 
+        crew_manager: DynamicProspectingCrewManager, 
         inputs: Dict[str, Any]
     ):
         """Run campaign in background"""
@@ -316,7 +332,7 @@ class CrewAIService:
     def get_crew_info(self) -> Dict[str, Any]:
         """Get information about CrewAI configuration"""
         try:
-            crew_manager = ProspectingCrewManager()
+            crew_manager = DynamicProspectingCrewManager()
             return crew_manager.get_crew_info()
         except Exception as e:
             logger.error(f"Error getting crew info: {str(e)}")

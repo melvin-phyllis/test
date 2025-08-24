@@ -1,283 +1,353 @@
 "use client"
 
-import { useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Progress } from "@/components/ui/progress"
-import { Download, Filter, Search, Mail, ExternalLink, Eye, ChevronDown, X } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
-interface Prospect {
-  id: string
-  company: string
-  logo: string
-  country: { flag: string; name: string }
-  sector: string
-  contact: { name: string; position: string }
-  email: string
-  linkedin: string
-  qualityScore: number
-  status: "new" | "contacted" | "qualified" | "converted"
-}
-
-const prospects: Prospect[] = [
-  {
-    id: "1",
-    company: "BMW Group",
-    logo: "🏢",
-    country: { flag: "🇩🇪", name: "Germany" },
-    sector: "Automotive",
-    contact: { name: "Klaus Mueller", position: "Head of Digital Innovation" },
-    email: "k.mueller@bmw.com",
-    linkedin: "https://linkedin.com/in/klaus-mueller",
-    qualityScore: 9.2,
-    status: "new",
-  },
-  {
-    id: "2",
-    company: "Schneider Electric",
-    logo: "🏢",
-    country: { flag: "🇫🇷", name: "France" },
-    sector: "Industry 4.0",
-    contact: { name: "Marie Dubois", position: "VP Technology" },
-    email: "m.dubois@schneider-electric.com",
-    linkedin: "https://linkedin.com/in/marie-dubois",
-    qualityScore: 8.8,
-    status: "contacted",
-  },
-  {
-    id: "3",
-    company: "Shopify",
-    logo: "🏢",
-    country: { flag: "🇨🇦", name: "Canada" },
-    sector: "E-commerce",
-    contact: { name: "Sarah Chen", position: "Director of Partnerships" },
-    email: "s.chen@shopify.com",
-    linkedin: "https://linkedin.com/in/sarah-chen",
-    qualityScore: 9.5,
-    status: "qualified",
-  },
-  {
-    id: "4",
-    company: "Revolut",
-    logo: "🏢",
-    country: { flag: "🇬🇧", name: "United Kingdom" },
-    sector: "FinTech",
-    contact: { name: "James Wilson", position: "Head of Business Development" },
-    email: "j.wilson@revolut.com",
-    linkedin: "https://linkedin.com/in/james-wilson",
-    qualityScore: 8.9,
-    status: "new",
-  },
-  {
-    id: "5",
-    company: "Telefonica",
-    logo: "🏢",
-    country: { flag: "🇪🇸", name: "Spain" },
-    sector: "Technology",
-    contact: { name: "Carlos Rodriguez", position: "Innovation Manager" },
-    email: "c.rodriguez@telefonica.com",
-    linkedin: "https://linkedin.com/in/carlos-rodriguez",
-    qualityScore: 8.1,
-    status: "contacted",
-  },
-]
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Search, Filter, Download, Plus, MapPin, Building, Mail, Phone, Star, Sparkles, RefreshCw, AlertCircle } from "lucide-react"
+import { ProspectEnrichmentDialog } from "@/components/app/prospect-enrichment-dialog"
+import { AddProspectDialog } from "@/components/app/add-prospect-dialog"
+import { useState, useMemo } from "react"
+import { useProspects } from "@/hooks/use-prospects"
+import { useHydration } from "@/hooks/use-hydration"
+import { toast } from "sonner"
 
 export default function ProspectsPage() {
-  const [selectedProspects, setSelectedProspects] = useState<string[]>([])
-  const [searchQuery, setSearchQuery] = useState("")
-  const [countryFilter, setCountryFilter] = useState<string>("all")
-  const [sectorFilter, setSectorFilter] = useState<string>("all")
-  const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchResults, setSearchResults] = useState<any[]>([])
+  const [showSearchResults, setShowSearchResults] = useState(false)
+  const [showAddDialog, setShowAddDialog] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [scoreFilter, setScoreFilter] = useState("all")
+  
+  // Check if component is hydrated
+  const isHydrated = useHydration()
+  
+  // Utiliser le hook pour récupérer les prospects réels
+  const { prospects, stats, loading, error, refreshProspects, getStatusLabel, getStatusVariant, getScoreColor } = useProspects()
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "new":
-        return (
-          <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-            New
-          </Badge>
-        )
-      case "contacted":
-        return (
-          <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">
-            Contacted
-          </Badge>
-        )
-      case "qualified":
-        return (
-          <Badge variant="secondary" className="bg-green-100 text-green-700">
-            Qualified
-          </Badge>
-        )
-      case "converted":
-        return (
-          <Badge variant="secondary" className="bg-purple-100 text-purple-700">
-            Converted
-          </Badge>
-        )
-      default:
-        return <Badge variant="secondary">Unknown</Badge>
+  const handleEnhancedSearch = async (query: string, industry?: string, location?: string) => {
+    if (!query.trim()) return
+
+    setIsSearching(true)
+    console.log("[v0] Searching prospects with query:", { query, industry, location })
+
+    try {
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      // Simulate search results
+      const simulatedResults = [
+        {
+          name: "Thomas Dubois",
+          company: "StartupTech",
+          position: "CEO",
+          score: 92,
+          snippet: "Entrepreneur expérimenté dans le secteur tech, spécialisé en IA",
+        },
+        {
+          name: "Claire Martin",
+          company: "InnovSolutions",
+          position: "CTO",
+          score: 88,
+          snippet: "Expert technique avec 10+ ans d'expérience en développement",
+        },
+        {
+          name: "Marc Laurent",
+          company: "TechCorp",
+          position: "VP Marketing",
+          score: 85,
+          snippet: "Responsable marketing digital avec focus sur l'acquisition",
+        },
+      ]
+
+      console.log("[v0] Search completed successfully")
+      setSearchResults(simulatedResults)
+      setShowSearchResults(true)
+    } catch (error) {
+      console.error("[v0] Search error:", error)
+    } finally {
+      setIsSearching(false)
     }
   }
 
-  const getQualityColor = (score: number) => {
-    if (score >= 9) return "text-green-600"
-    if (score >= 7) return "text-yellow-600"
-    return "text-red-600"
+  const handleAddProspect = () => {
+    console.log("[v0] Opening add prospect dialog")
+    setShowAddDialog(true)
   }
 
-  const filteredProspects = prospects.filter((prospect) => {
-    const matchesSearch =
-      prospect.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      prospect.contact.name.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCountry = countryFilter === "all" || prospect.country.name === countryFilter
-    const matchesSector = sectorFilter === "all" || prospect.sector === sectorFilter
-    const matchesStatus = statusFilter === "all" || prospect.status === statusFilter
+  // Filtrer les prospects en fonction des critères
+  const filteredProspects = useMemo(() => {
+    if (!isHydrated) return [];
+    
+    return prospects.filter(prospect => {
+      const matchesSearch = !searchTerm || 
+        prospect.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (prospect.contact_name && prospect.contact_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (prospect.email && prospect.email.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    return matchesSearch && matchesCountry && matchesSector && matchesStatus
-  })
+      const matchesStatus = statusFilter === "all" || prospect.status === statusFilter;
 
-  const toggleProspectSelection = (prospectId: string) => {
-    setSelectedProspects((prev) =>
-      prev.includes(prospectId) ? prev.filter((id) => id !== prospectId) : [...prev, prospectId],
-    )
-  }
+      const matchesScore = scoreFilter === "all" ||
+        (scoreFilter === "high" && prospect.quality_score >= 90) ||
+        (scoreFilter === "medium" && prospect.quality_score >= 75 && prospect.quality_score < 90) ||
+        (scoreFilter === "low" && prospect.quality_score < 75);
 
-  const toggleSelectAll = () => {
-    setSelectedProspects(
-      selectedProspects.length === filteredProspects.length ? [] : filteredProspects.map((p) => p.id),
-    )
-  }
-
-  const clearFilters = () => {
-    setCountryFilter("all")
-    setSectorFilter("all")
-    setStatusFilter("all")
-    setSearchQuery("")
-  }
-
-  const uniqueCountries = Array.from(new Set(prospects.map((p) => p.country.name)))
-  const uniqueSectors = Array.from(new Set(prospects.map((p) => p.sector)))
-  const uniqueStatuses = Array.from(new Set(prospects.map((p) => p.status)))
+      return matchesSearch && matchesStatus && matchesScore;
+    });
+  }, [prospects, searchTerm, statusFilter, scoreFilter, isHydrated]);
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Prospects</h1>
-          <p className="text-muted-foreground">{filteredProspects.length} prospects found worldwide</p>
+          <h1 className="text-3xl font-serif font-bold">Prospects</h1>
+          <p className="text-muted-foreground">Gérez et suivez vos prospects qualifiés par l'IA</p>
         </div>
-        <div className="flex space-x-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <Download className="mr-2 h-4 w-4" />
-                Export
-                <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>Export as CSV</DropdownMenuItem>
-              <DropdownMenuItem>Export as Excel</DropdownMenuItem>
-              <DropdownMenuItem>Export as PDF</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          {selectedProspects.length > 0 && <Button>Bulk Actions ({selectedProspects.length})</Button>}
+        <div className="flex gap-2">
+          {/* Refresh button */}
+          <Button
+            variant="outline"
+            onClick={refreshProspects}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                Actualisation...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Actualiser
+              </>
+            )}
+          </Button>
+          {/* Enhanced search button */}
+          <Button
+            variant="outline"
+            onClick={() => handleEnhancedSearch("CEO startup France", "technology", "Paris")}
+            disabled={isSearching}
+          >
+            {isSearching ? (
+              <>
+                <Search className="w-4 h-4 mr-2 animate-spin" />
+                Recherche IA...
+              </>
+            ) : (
+              <>
+                <Search className="w-4 h-4 mr-2" />
+                Recherche IA
+              </>
+            )}
+          </Button>
+          <Button className="animate-pulse-glow" onClick={handleAddProspect}>
+            <Plus className="w-4 h-4 mr-2" />
+            Ajouter un prospect
+          </Button>
         </div>
       </div>
 
-      {/* Filters */}
-      <Card>
+      {/* Error Alert */}
+      {error && (
+        <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2 text-red-700 dark:text-red-400">
+              <AlertCircle className="w-4 h-4" />
+              <span className="text-sm">Erreur de chargement des prospects: {error}</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="border-border/50 hover:shadow-lg transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Prospects</p>
+                <p className="text-2xl font-bold">{!isHydrated || loading ? "..." : stats.total.toLocaleString()}</p>
+              </div>
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Building className="w-6 h-6 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/50 hover:shadow-lg transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Qualifiés</p>
+                <p className="text-2xl font-bold">{!isHydrated || loading ? "..." : stats.qualified.toLocaleString()}</p>
+              </div>
+              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
+                <Star className="w-6 h-6 text-accent" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/50 hover:shadow-lg transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Contactés</p>
+                <p className="text-2xl font-bold">{!isHydrated || loading ? "..." : stats.contacted.toLocaleString()}</p>
+              </div>
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Mail className="w-6 h-6 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/50 hover:shadow-lg transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Score Moyen</p>
+                <p className="text-2xl font-bold">{!isHydrated || loading ? "..." : stats.avgScore}</p>
+              </div>
+              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
+                <Star className="w-6 h-6 text-accent" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters and Search */}
+      <Card className="border-border/50">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Filter className="h-5 w-5" />
-            <span>Filters</span>
-            {(countryFilter !== "all" || sectorFilter !== "all" || statusFilter !== "all" || searchQuery) && (
-              <Button variant="ghost" size="sm" onClick={clearFilters}>
-                <X className="h-4 w-4 mr-1" />
-                Clear All
-              </Button>
-            )}
-          </CardTitle>
+          <CardTitle>Filtres et Recherche</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search companies or contacts..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input 
+                placeholder="Rechercher par nom, entreprise, email..." 
                 className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Select value={countryFilter} onValueChange={setCountryFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Countries" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Countries</SelectItem>
-                {uniqueCountries.map((country) => (
-                  <SelectItem key={country} value={country}>
-                    {country}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={sectorFilter} onValueChange={setSectorFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Sectors" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Sectors</SelectItem>
-                {uniqueSectors.map((sector) => (
-                  <SelectItem key={sector} value={sector}>
-                    {sector}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Statuses" />
+              <SelectTrigger className="w-full md:w-48">
+                <SelectValue placeholder="Statut" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                {uniqueStatuses.map((status) => (
-                  <SelectItem key={status} value={status}>
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </SelectItem>
-                ))}
+                <SelectItem value="all">Tous les statuts</SelectItem>
+                <SelectItem value="qualified">Qualifié</SelectItem>
+                <SelectItem value="contacted">Contacté</SelectItem>
+                <SelectItem value="interested">Intéressé</SelectItem>
+                <SelectItem value="identified">Identifié</SelectItem>
               </SelectContent>
             </Select>
+            <Select value={scoreFilter} onValueChange={setScoreFilter}>
+              <SelectTrigger className="w-full md:w-48">
+                <SelectValue placeholder="Score" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les scores</SelectItem>
+                <SelectItem value="high">90-100</SelectItem>
+                <SelectItem value="medium">75-89</SelectItem>
+                <SelectItem value="low">0-74</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="outline">
+              <Filter className="w-4 h-4 mr-2" />
+              Filtres
+            </Button>
+            <Button variant="outline">
+              <Download className="w-4 h-4 mr-2" />
+              Exporter
+            </Button>
           </div>
         </CardContent>
       </Card>
 
+      {/* Search Results Section */}
+      {showSearchResults && (
+        <Card className="border-accent/20 bg-accent/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Search className="w-5 h-5 text-accent" />
+              Résultats de recherche IA ({searchResults.length})
+            </CardTitle>
+            <CardDescription>Nouveaux prospects découverts par l'IA</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              {searchResults.slice(0, 5).map((result, index) => (
+                <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3">
+                      <div>
+                        <h4 className="font-semibold">{result.name}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {result.position} chez {result.company}
+                        </p>
+                        {result.snippet && <p className="text-xs text-muted-foreground mt-1">{result.snippet}</p>}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-accent border-accent">
+                      Score: {result.score}
+                    </Badge>
+                    <ProspectEnrichmentDialog
+                      prospect={{
+                        name: result.name,
+                        company: result.company,
+                        position: result.position,
+                      }}
+                      trigger={
+                        <Button variant="outline" size="sm">
+                          <Sparkles className="w-3 h-3 mr-1" />
+                          Enrichir
+                        </Button>
+                      }
+                    />
+                    <Button size="sm">Ajouter</Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {searchResults.length > 5 && (
+              <div className="text-center mt-4">
+                <Button variant="outline">Voir tous les résultats ({searchResults.length})</Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Prospects Table */}
-      <Card>
-        <CardContent className="p-0">
+      <Card className="border-border/50">
+        <CardHeader>
+          <CardTitle>Liste des Prospects</CardTitle>
+          <CardDescription>{filteredProspects.length} prospects trouvés</CardDescription>
+        </CardHeader>
+        <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-12">
-                  <Checkbox
-                    checked={selectedProspects.length === filteredProspects.length && filteredProspects.length > 0}
-                    onCheckedChange={toggleSelectAll}
-                  />
-                </TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead>Country</TableHead>
-                <TableHead>Sector</TableHead>
+                <TableHead>Prospect</TableHead>
+                <TableHead>Entreprise</TableHead>
                 <TableHead>Contact</TableHead>
-                <TableHead>Quality</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Localisation</TableHead>
+                <TableHead>Score IA</TableHead>
+                <TableHead>Statut</TableHead>
+                <TableHead>Dernier Contact</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -285,54 +355,129 @@ export default function ProspectsPage() {
               {filteredProspects.map((prospect) => (
                 <TableRow key={prospect.id} className="hover:bg-muted/50">
                   <TableCell>
-                    <Checkbox
-                      checked={selectedProspects.includes(prospect.id)}
-                      onCheckedChange={() => toggleProspectSelection(prospect.id)}
-                    />
-                  </TableCell>
-                  <TableCell>
                     <div className="flex items-center space-x-3">
-                      <span className="text-2xl">{prospect.logo}</span>
-                      <span className="font-medium">{prospect.company}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-lg">{prospect.country.flag}</span>
-                      <span className="text-sm">{prospect.country.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{prospect.sector}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium text-sm">{prospect.contact.name}</p>
-                      <p className="text-xs text-muted-foreground">{prospect.contact.position}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-12">
-                        <Progress value={prospect.qualityScore * 10} className="h-2" />
+                      <Avatar>
+                        <AvatarImage src="/placeholder.svg" />
+                        <AvatarFallback>
+                          {prospect.contact_name
+                            ? prospect.contact_name.split(" ").map((n) => n[0]).join("")
+                            : prospect.company_name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">{prospect.contact_name || "Contact à définir"}</div>
+                        <div className="text-sm text-muted-foreground">{prospect.contact_position || "Poste à définir"}</div>
+                        {prospect.extra_data?.decision_makers && prospect.extra_data.decision_makers.length > 1 && (
+                          <div className="text-xs text-accent mt-1">
+                            +{prospect.extra_data.decision_makers.length - 1} autres décideurs
+                          </div>
+                        )}
                       </div>
-                      <span className={`text-sm font-medium ${getQualityColor(prospect.qualityScore)}`}>
-                        {prospect.qualityScore}/10
-                      </span>
                     </div>
                   </TableCell>
-                  <TableCell>{getStatusBadge(prospect.status)}</TableCell>
+                  <TableCell>
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <Building className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium">{prospect.company_name}</span>
+                      </div>
+                      <div className="text-sm text-muted-foreground">{prospect.description}</div>
+                      <div className="text-xs text-muted-foreground">Secteur: {prospect.sector}</div>
+                      {prospect.website && (
+                        <a 
+                          href={prospect.website} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="text-xs text-primary hover:underline"
+                        >
+                          {prospect.website}
+                        </a>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-1">
+                      {prospect.email ? (
+                        <div className="flex items-center space-x-2 text-sm">
+                          <Mail className="w-3 h-3 text-green-500" />
+                          <a href={`mailto:${prospect.email}`} className="text-primary hover:underline">
+                            {prospect.email}
+                          </a>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                          <Mail className="w-3 h-3" />
+                          <span>Email à trouver</span>
+                        </div>
+                      )}
+                      {prospect.phone ? (
+                        <div className="flex items-center space-x-2 text-sm">
+                          <Phone className="w-3 h-3 text-green-500" />
+                          <a href={`tel:${prospect.phone}`} className="text-primary hover:underline">
+                            {prospect.phone}
+                          </a>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                          <Phone className="w-3 h-3" />
+                          <span>Téléphone à trouver</span>
+                        </div>
+                      )}
+                      {prospect.extra_data?.linkedin_profiles && (
+                        <div className="text-xs">
+                          <a 
+                            href={prospect.extra_data.linkedin_profiles[0]} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-blue-600 hover:underline"
+                          >
+                            LinkedIn
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="sm">
-                        <Mail className="h-4 w-4" />
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm">{prospect.location}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Star className={`w-4 h-4 ${getScoreColor(prospect.quality_score)}`} />
+                      <span className={`font-medium ${getScoreColor(prospect.quality_score)}`}>{prospect.quality_score}/100</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={getStatusVariant(prospect.status)}>
+                      {getStatusLabel(prospect.status)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm text-muted-foreground">
+                      {new Date(prospect.updated_at).toLocaleDateString('fr-FR')}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Button variant="outline" size="sm">
+                        <Mail className="w-3 h-3 mr-1" />
+                        Contact
                       </Button>
-                      <Button variant="ghost" size="sm">
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
+                      <ProspectEnrichmentDialog
+                        prospect={{
+                          name: prospect.contact_name || prospect.company_name,
+                          company: prospect.company_name,
+                          position: prospect.contact_position || "À définir",
+                        }}
+                        trigger={
+                          <Button variant="ghost" size="sm">
+                            <Sparkles className="w-3 h-3 mr-1" />
+                            Enrichir
+                          </Button>
+                        }
+                      />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -341,6 +486,9 @@ export default function ProspectsPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Add Prospect Dialog */}
+      {showAddDialog && <AddProspectDialog onClose={() => setShowAddDialog(false)} />}
     </div>
   )
 }

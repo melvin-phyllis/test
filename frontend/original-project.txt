@@ -1,0 +1,216 @@
+Directory structure:
+└── melvin-phyllis-test/
+    ├── README.md
+    ├── CLAUDE.md
+    ├── crewai-rag-tool.lock
+    ├── DEPLOY.md
+    ├── docker-compose.full.yml
+    ├── ENHANCED_UI_GUIDE.md
+    ├── FRONTEND_INTERNATIONAL_GUIDE.md
+    ├── FRONTEND_V0_FINAL_GUIDE.md
+    ├── GLOBAL_PROSPECTING_GUIDE.md
+    ├── V0_FRONTEND_SPECIFICATION.md
+    ├── V0_PROMPTS.md
+    ├── backend/
+    │   ├── README.md
+    │   ├── alembic.ini
+    │   ├── crewai-rag-tool.lock
+    │   ├── docker-compose.yml
+    │   ├── Dockerfile
+    │   ├── fix_permissions.sh
+    │   ├── pydantic_v2_migrator.py
+    │   ├── README_BACKEND.md
+    │   ├── requirements.txt
+    │   ├── .env.example
+    │   ├── alembic/
+    │   │   ├── README
+    │   │   ├── env.py
+    │   │   ├── script.py.mako
+    │   │   └── versions/
+    │   │       └── f84c110a4821_initial_migration.py
+    │   ├── app/
+    │   │   ├── __init__.py
+    │   │   ├── main.py
+    │   │   ├── api/
+    │   │   │   ├── __init__.py
+    │   │   │   └── v1/
+    │   │   │       ├── __init__.py
+    │   │   │       ├── api.py
+    │   │   │       └── endpoints/
+    │   │   │           ├── __init__.py
+    │   │   │           ├── agents.py
+    │   │   │           ├── prospecting.py
+    │   │   │           └── prospects.py
+    │   │   ├── core/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── config.py
+    │   │   │   └── database.py
+    │   │   ├── models/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── agent.py
+    │   │   │   ├── campaign.py
+    │   │   │   ├── prospect.py
+    │   │   │   └── user.py
+    │   │   ├── schemas/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── agent.py
+    │   │   │   ├── campaign.py
+    │   │   │   └── prospect.py
+    │   │   ├── services/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── crewai_service.py
+    │   │   │   ├── prospect_parser.py
+    │   │   │   └── websocket_manager.py
+    │   │   └── utils/
+    │   │       ├── __init__.py
+    │   │       └── logger.py
+    │   └── src/
+    │       ├── __init__.py
+    │       └── ai_agent_crew/
+    │           ├── __init__.py
+    │           ├── crew.py
+    │           ├── main.py
+    │           ├── config/
+    │           │   ├── agents.yaml
+    │           │   └── tasks.yaml
+    │           └── tools/
+    │               ├── __init__.py
+    │               └── custom_tool.py
+    ├── frontend/
+    │   ├── components.json
+    │   ├── next.config.mjs
+    │   ├── package.json
+    │   ├── pnpm-lock.yaml
+    │   ├── postcss.config.mjs
+    │   ├── tsconfig.json
+    │   ├── app/
+    │   │   ├── globals.css
+    │   │   ├── layout.tsx
+    │   │   ├── not-found.tsx
+    │   │   ├── page.tsx
+    │   │   ├── app/
+    │   │   │   ├── layout.tsx
+    │   │   │   ├── loading.tsx
+    │   │   │   ├── page.tsx
+    │   │   │   ├── agents/
+    │   │   │   │   └── page.tsx
+    │   │   │   ├── analytics/
+    │   │   │   │   └── page.tsx
+    │   │   │   ├── campaigns/
+    │   │   │   │   └── page.tsx
+    │   │   │   ├── dashboard/
+    │   │   │   │   └── page.tsx
+    │   │   │   └── prospects/
+    │   │   │       ├── loading.tsx
+    │   │   │       └── page.tsx
+    │   │   ├── auth/
+    │   │   │   └── login/
+    │   │   │       └── page.tsx
+    │   │   └── demo/
+    │   │       └── page.tsx
+    │   ├── components/
+    │   │   ├── animated-counter.tsx
+    │   │   ├── enhanced-animated-counter.tsx
+    │   │   ├── enhanced-data-table.tsx
+    │   │   ├── enhanced-hero-section.tsx
+    │   │   ├── enhanced-kpi-card.tsx
+    │   │   ├── enhanced-notification-system.tsx
+    │   │   ├── enhanced-world-map-background.tsx
+    │   │   ├── error-boundary.tsx
+    │   │   ├── language-toggle.tsx
+    │   │   ├── loading-spinner.tsx
+    │   │   ├── theme-provider.tsx
+    │   │   ├── world-map-background.tsx
+    │   │   ├── app/
+    │   │   │   ├── activity-feed.tsx
+    │   │   │   ├── agents-panel.tsx
+    │   │   │   ├── app-header.tsx
+    │   │   │   ├── app-sidebar.tsx
+    │   │   │   ├── auth-header.tsx
+    │   │   │   ├── campaign-creation-modal.tsx
+    │   │   │   ├── campaign-details-modal.tsx
+    │   │   │   ├── campaigns-table.tsx
+    │   │   │   ├── connection-status.tsx
+    │   │   │   ├── country-selector.tsx
+    │   │   │   ├── kpi-cards.tsx
+    │   │   │   ├── loading-states.tsx
+    │   │   │   ├── real-time-agents-panel.tsx
+    │   │   │   ├── real-time-kpi-cards.tsx
+    │   │   │   ├── realtime-dashboard.tsx
+    │   │   │   ├── sector-selector.tsx
+    │   │   │   ├── websocket-provider.tsx
+    │   │   │   └── world-map-dashboard.tsx
+    │   │   ├── debug/
+    │   │   │   ├── simulate-crewai.tsx
+    │   │   │   └── websocket-debug.tsx
+    │   │   └── ui/
+    │   │       ├── accordion.tsx
+    │   │       ├── alert-dialog.tsx
+    │   │       ├── alert.tsx
+    │   │       ├── aspect-ratio.tsx
+    │   │       ├── avatar.tsx
+    │   │       ├── badge.tsx
+    │   │       ├── breadcrumb.tsx
+    │   │       ├── button.tsx
+    │   │       ├── calendar.tsx
+    │   │       ├── card.tsx
+    │   │       ├── carousel.tsx
+    │   │       ├── chart.tsx
+    │   │       ├── checkbox.tsx
+    │   │       ├── collapsible.tsx
+    │   │       ├── command.tsx
+    │   │       ├── context-menu.tsx
+    │   │       ├── dialog.tsx
+    │   │       ├── drawer.tsx
+    │   │       ├── dropdown-menu.tsx
+    │   │       ├── form.tsx
+    │   │       ├── hover-card.tsx
+    │   │       ├── input-otp.tsx
+    │   │       ├── input.tsx
+    │   │       ├── label.tsx
+    │   │       ├── menubar.tsx
+    │   │       ├── navigation-menu.tsx
+    │   │       ├── pagination.tsx
+    │   │       ├── popover.tsx
+    │   │       ├── progress.tsx
+    │   │       ├── radio-group.tsx
+    │   │       ├── resizable.tsx
+    │   │       ├── scroll-area.tsx
+    │   │       ├── select.tsx
+    │   │       ├── separator.tsx
+    │   │       ├── sheet.tsx
+    │   │       ├── sidebar.tsx
+    │   │       ├── skeleton.tsx
+    │   │       ├── slider.tsx
+    │   │       ├── sonner.tsx
+    │   │       ├── switch.tsx
+    │   │       ├── table.tsx
+    │   │       ├── tabs.tsx
+    │   │       ├── textarea.tsx
+    │   │       ├── toast.tsx
+    │   │       ├── toaster.tsx
+    │   │       ├── toggle-group.tsx
+    │   │       ├── toggle.tsx
+    │   │       ├── tooltip.tsx
+    │   │       ├── use-mobile.tsx
+    │   │       └── use-toast.ts
+    │   ├── hooks/
+    │   │   ├── use-hydration.ts
+    │   │   ├── use-mobile.ts
+    │   │   ├── use-realtime.ts
+    │   │   └── use-toast.ts
+    │   ├── i18n/
+    │   │   ├── en.ts
+    │   │   └── fr.ts
+    │   └── styles/
+    │       ├── enhanced-animations.css
+    │       ├── enhanced-components.css
+    │       └── globals.css
+    └── sript execution/
+        ├── setup_project.sh
+        ├── start_backend.sh
+        ├── start_dev.sh
+        ├── start_frontend.sh
+        ├── test_full_stack.py
+        ├── test_installation.py
+        └── test_websocket.py

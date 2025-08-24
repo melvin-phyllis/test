@@ -17,12 +17,21 @@ class GlobalBusinessSearchTool(BaseTool):
     )
     args_schema: Type[BaseModel] = SearchInput
 
-    def _run(self, search_query: str) -> str:
+    def _run(self, **kwargs) -> str:
         """
         Recherche d'entreprises à l'international
         """
         try:
-            # Simulation d'une recherche d'entreprises ivoiriennes
+            # Extraire search_query des arguments
+            search_query = kwargs.get('search_query', '')
+            if not search_query and len(kwargs) == 1:
+                # Prendre la première valeur si un seul argument
+                search_query = list(kwargs.values())[0]
+            
+            if not search_query:
+                return "Erreur: aucune requête de recherche fournie"
+            
+            # Simulation d'une recherche d'entreprises internationales
             # En production, vous pourriez intégrer avec:
             # - API Crunchbase (startups et entreprises tech)
             # - API LinkedIn Sales Navigator
@@ -32,11 +41,11 @@ class GlobalBusinessSearchTool(BaseTool):
             # - Registres d'entreprises nationaux
             # - API Clearbit, Hunter.io pour enrichissement
             
-            results = self._simulate_business_search(search_query)
+            results = self._simulate_business_search(str(search_query))
             return results
             
         except Exception as e:
-            return f"Erreur lors de la recherche: {str(e)}"
+            return f"Erreur lors de la recherche: {str(e)} | Args reçus: {kwargs}"
     
     def _simulate_business_search(self, query: str) -> str:
         """
@@ -146,11 +155,19 @@ class ContactFinderTool(BaseTool):
     )
     args_schema: Type[BaseModel] = SearchInput
 
-    def _run(self, search_query: str) -> str:
+    def _run(self, **kwargs) -> str:
         """
         Recherche d'informations de contact
         """
         try:
+            # Extraire search_query des arguments
+            search_query = kwargs.get('search_query', '')
+            if not search_query and len(kwargs) == 1:
+                search_query = list(kwargs.values())[0]
+            
+            if not search_query:
+                return "Erreur: aucune requête de recherche fournie"
+                
             # En production, intégrer avec:
             # - LinkedIn Sales Navigator (mondial)
             # - Hunter.io pour emails professionnels
@@ -160,11 +177,11 @@ class ContactFinderTool(BaseTool):
             # - Annuaires professionnels internationaux
             # - Crunchbase pour contacts startup
             
-            contacts = self._simulate_contact_search(search_query)
+            contacts = self._simulate_contact_search(str(search_query))
             return contacts
             
         except Exception as e:
-            return f"Erreur lors de la recherche de contacts: {str(e)}"
+            return f"Erreur lors de la recherche de contacts: {str(e)} | Args reçus: {kwargs}"
     
     def _simulate_contact_search(self, company_name: str) -> str:
         """
@@ -232,16 +249,24 @@ class GlobalMarketAnalysisTool(BaseTool):
     )
     args_schema: Type[BaseModel] = SearchInput
 
-    def _run(self, search_query: str) -> str:
+    def _run(self, **kwargs) -> str:
         """
         Analyse de marché internationale
         """
         try:
-            analysis = self._analyze_global_market(search_query)
+            # Extraire search_query des arguments
+            search_query = kwargs.get('search_query', '')
+            if not search_query and len(kwargs) == 1:
+                search_query = list(kwargs.values())[0]
+            
+            if not search_query:
+                return "Erreur: aucune requête de recherche fournie"
+                
+            analysis = self._analyze_global_market(str(search_query))
             return analysis
             
         except Exception as e:
-            return f"Erreur lors de l'analyse de marché: {str(e)}"
+            return f"Erreur lors de l'analyse de marché: {str(e)} | Args reçus: {kwargs}"
     
     def _analyze_global_market(self, product_service: str) -> str:
         """

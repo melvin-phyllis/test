@@ -1,288 +1,430 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRealTimeData } from "@/hooks/use-real-time-data"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Plus, Eye, Pause, Play, Download, MoreHorizontal } from "lucide-react"
-import { CampaignCreationModal } from "@/components/app/campaign-creation-modal"
-import { CampaignDetailsModal } from "@/components/app/campaign-details-modal"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { useAppStore } from "@/lib/store"
-import { campaignApi } from "@/lib/api"
-import { useToast } from "@/hooks/use-toast"
-import type { Campaign } from "@/lib/types"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
+import {
+  Play,
+  Pause,
+  Plus,
+  Search,
+  MoreHorizontal,
+  Users,
+  Mail,
+  Phone,
+  MessageSquare,
+  TrendingUp,
+  Calendar,
+  Target,
+  Zap,
+} from "lucide-react"
 
-// Mapping des pays vers les drapeaux
-const countryFlags: { [key: string]: string } = {
-  "France": "🇫🇷",
-  "Germany": "🇩🇪",
-  "United Kingdom": "🇬🇧",
-  "Italy": "🇮🇹",
-  "Spain": "🇪🇸",
-  "Netherlands": "🇳🇱",
-  "Belgium": "🇧🇪",
-  "Switzerland": "🇨🇭",
-  "Canada": "🇨🇦",
-  "United States": "🇺🇸",
-  "International": "🌍",
-  "Côte d'Ivoire": "🇨🇮"
+// Types pour les campagnes
+interface Campaign {
+  id: number
+  name: string
+  status: "draft" | "running" | "paused" | "completed"
+  product_description: string
+  target_location?: string
+  target_sectors?: string[]
+  prospect_count: number
+  created_at: string
+  started_at?: string
+  completed_at?: string
+}
+
+// Données simulées des campagnes
+const campaigns: Campaign[] = [
+  {
+    id: "1",
+    name: "SaaS Startup Outreach Q1",
+    status: "active",
+    type: "email",
+    prospects: 500,
+    contacted: 342,
+    responses: 28,
+    meetings: 12,
+    conversionRate: 8.2,
+    startDate: "2024-01-15",
+    agent: "Agent Commercial",
+    template: "SaaS Cold Email",
+  },
+  {
+    id: "2",
+    name: "LinkedIn Tech Leaders",
+    status: "active",
+    type: "linkedin",
+    prospects: 250,
+    contacted: 180,
+    responses: 22,
+    meetings: 8,
+    conversionRate: 12.2,
+    startDate: "2024-01-20",
+    agent: "Agent LinkedIn",
+    template: "Tech Executive Outreach",
+  },
+  {
+    id: "3",
+    name: "Enterprise Sales Campaign",
+    status: "paused",
+    type: "mixed",
+    prospects: 150,
+    contacted: 89,
+    responses: 15,
+    meetings: 6,
+    conversionRate: 16.9,
+    startDate: "2024-01-10",
+    agent: "Agent Enterprise",
+    template: "Enterprise Multi-Touch",
+  },
+  {
+    id: "4",
+    name: "Startup Founders Outreach",
+    status: "completed",
+    type: "email",
+    prospects: 300,
+    contacted: 300,
+    responses: 45,
+    meetings: 18,
+    conversionRate: 15.0,
+    startDate: "2023-12-01",
+    endDate: "2024-01-15",
+    agent: "Agent Startup",
+    template: "Founder to Founder",
+  },
+]
+
+const statusColors = {
+  active: "bg-green-500",
+  paused: "bg-yellow-500",
+  completed: "bg-blue-500",
+  draft: "bg-gray-500",
+}
+
+const typeIcons = {
+  email: Mail,
+  linkedin: Users,
+  phone: Phone,
+  mixed: MessageSquare,
 }
 
 export default function CampaignsPage() {
-  const { campaigns, setCampaigns } = useAppStore()
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
-  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const { toast } = useToast()
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [newCampaign, setNewCampaign] = useState({
+    name: "",
+    product_description: "",
+    target_location: "",
+    target_sectors: [] as string[],
+    prospect_count: 100
+  })
+  
+  const { campaigns, loading, error, startCampaign, stopCampaign, refreshData } = useRealTimeData()
 
-  // Charger les campagnes au montage
-  useEffect(() => {
-    const loadCampaigns = async () => {
-      try {
-        setIsLoading(true)
-        const fetchedCampaigns = await campaignApi.getCampaigns()
-        setCampaigns(fetchedCampaigns)
-      } catch (error) {
-        console.error('Failed to load campaigns:', error)
-        toast({
-          title: "Erreur",
-          description: "Impossible de charger les campagnes",
-          variant: "destructive",
-        })
-      } finally {
-        setIsLoading(false)
-      }
+  const filteredCampaigns = campaigns.filter((campaign) => {
+    const matchesSearch = campaign.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus = statusFilter === "all" || campaign.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
+
+  const getStatusBadge = (status: Campaign["status"]) => {
+    const colors = {
+      running: "bg-green-100 text-green-800 border-green-200",
+      paused: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      completed: "bg-blue-100 text-blue-800 border-blue-200",
+      draft: "bg-gray-100 text-gray-800 border-gray-200",
     }
 
-    loadCampaigns()
-    
-    // Recharger toutes les 30 secondes pour les mises à jour en temps réel
-    const interval = setInterval(loadCampaigns, 30000)
-    return () => clearInterval(interval)
-  }, [])
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "running":
-        return (
-          <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-            En cours
-          </Badge>
-        )
-      case "completed":
-        return (
-          <Badge variant="secondary" className="bg-green-100 text-green-700">
-            Terminée
-          </Badge>
-        )
-      case "pending":
-        return (
-          <Badge variant="secondary" className="bg-gray-100 text-gray-700">
-            En attente
-          </Badge>
-        )
-      case "failed":
-        return (
-          <Badge variant="secondary" className="bg-red-100 text-red-700">
-            Échec
-          </Badge>
-        )
-      case "cancelled":
-        return (
-          <Badge variant="secondary" className="bg-orange-100 text-orange-700">
-            Annulée
-          </Badge>
-        )
-      default:
-        return <Badge variant="secondary">Inconnu</Badge>
+    const labels = {
+      running: "En cours",
+      paused: "En pause",
+      completed: "Terminé",
+      draft: "Brouillon",
     }
+
+    return (
+      <Badge variant="outline" className={colors[status]}>
+        {labels[status]}
+      </Badge>
+    )
   }
 
-  const handleViewDetails = (campaign: Campaign) => {
-    setSelectedCampaign(campaign)
-    setIsDetailsModalOpen(true)
-  }
-
-  const handleCampaignAction = async (campaignId: number, action: 'start' | 'stop') => {
+  const handleStartCampaign = async (campaignId: number) => {
     try {
-      if (action === 'start') {
-        await campaignApi.startCampaign(campaignId)
-        toast({
-          title: "Campagne démarrée",
-          description: "La campagne a été démarrée avec succès",
-        })
-      } else {
-        await campaignApi.stopCampaign(campaignId)
-        toast({
-          title: "Campagne arrêtée",
-          description: "La campagne a été arrêtée",
-        })
-      }
-      
-      // Recharger les campagnes
-      const updatedCampaigns = await campaignApi.getCampaigns()
-      setCampaigns(updatedCampaigns)
+      await startCampaign(campaignId)
+      toast.success("Campagne démarrée avec succès")
     } catch (error) {
-      console.error('Failed to update campaign:', error)
-      toast({
-        title: "Erreur",
-        description: "Impossible de modifier la campagne",
-        variant: "destructive",
-      })
+      toast.error("Erreur lors du démarrage de la campagne")
     }
   }
 
-  const calculateProgress = (campaign: Campaign): number => {
-    if (campaign.status === 'completed') return 100
-    if (campaign.status === 'pending') return 0
-    if (campaign.status === 'failed') return 0
-    
-    // Pour les campagnes en cours, calculer un pourcentage basé sur les résultats
-    const prospectsFound = campaign.results_summary?.prospects_found || 0
-    const targetCount = campaign.prospect_count || 1
-    return Math.min(100, (prospectsFound / targetCount) * 100)
+  const handleStopCampaign = async (campaignId: number) => {
+    try {
+      await stopCampaign(campaignId)
+      toast.success("Campagne arrêtée avec succès")
+    } catch (error) {
+      toast.error("Erreur lors de l'arrêt de la campagne")
+    }
   }
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
+  const handleCreateCampaign = async () => {
+    try {
+      // Ici on appellerait l'API pour créer la campagne
+      // await apiClient.createCampaign(newCampaign)
+      setIsCreateDialogOpen(false)
+      setNewCampaign({ name: "", product_description: "", target_location: "", target_sectors: [], prospect_count: 100 })
+      toast.success("Campagne créée avec succès")
+      refreshData()
+    } catch (error) {
+      toast.error("Erreur lors de la création de la campagne")
+    }
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Campaigns</h1>
-          <p className="text-muted-foreground">Manage your international prospecting campaigns</p>
+          <h1 className="text-3xl font-bold font-serif text-primary">Campagnes</h1>
+          <p className="text-muted-foreground">Gérez et suivez vos campagnes de prospection IA</p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          New Campaign
-        </Button>
+
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-primary hover:bg-primary/90">
+              <Plus className="h-4 w-4 mr-2" />
+              Nouvelle campagne
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Créer une nouvelle campagne</DialogTitle>
+              <DialogDescription>Configurez votre campagne de prospection IA</DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="campaign-name">Nom de la campagne</Label>
+                  <Input id="campaign-name" placeholder="Ex: Outreach Q1 2024" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="campaign-type">Type de campagne</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner le type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="email">Email</SelectItem>
+                      <SelectItem value="linkedin">LinkedIn</SelectItem>
+                      <SelectItem value="phone">Téléphone</SelectItem>
+                      <SelectItem value="mixed">Multi-canal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="agent">Agent IA</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir un agent" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="commercial">Agent Commercial</SelectItem>
+                      <SelectItem value="linkedin">Agent LinkedIn</SelectItem>
+                      <SelectItem value="enterprise">Agent Enterprise</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="template">Template</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choisir un template" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="saas">SaaS Cold Email</SelectItem>
+                      <SelectItem value="tech">Tech Executive</SelectItem>
+                      <SelectItem value="enterprise">Enterprise Multi-Touch</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea id="description" placeholder="Décrivez l'objectif de cette campagne..." rows={3} />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Switch id="auto-start" />
+                <Label htmlFor="auto-start">Démarrer automatiquement</Label>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                Annuler
+              </Button>
+              <Button className="bg-primary hover:bg-primary/90">Créer la campagne</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center py-12">
-          <div className="text-muted-foreground">Chargement des campagnes...</div>
+      {/* Filtres et recherche */}
+      <div className="flex items-center space-x-4">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder="Rechercher une campagne..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
         </div>
-      ) : campaigns.length === 0 ? (
-        <div className="text-center py-12">
-          <h3 className="text-lg font-semibold mb-2">Aucune campagne</h3>
-          <p className="text-muted-foreground mb-4">Créez votre première campagne de prospection</p>
-          <Button onClick={() => setIsModalOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Nouvelle campagne
-          </Button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {campaigns.map((campaign) => {
-            const progress = calculateProgress(campaign)
-            const flag = countryFlags[campaign.target_location] || "🌍"
-            
-            return (
-              <Card key={campaign.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <CardTitle className="text-lg">{campaign.name}</CardTitle>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-lg">{flag}</span>
-                        <span className="text-sm text-muted-foreground">
-                          {campaign.target_location}
-                        </span>
-                      </div>
-                    </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <MoreHorizontal className="h-4 w-4" />
+
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="Statut" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tous les statuts</SelectItem>
+            <SelectItem value="running">En cours</SelectItem>
+            <SelectItem value="paused">En pause</SelectItem>
+            <SelectItem value="completed">Terminé</SelectItem>
+            <SelectItem value="draft">Brouillon</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Liste des campagnes */}
+      <div className="grid gap-6">
+        {filteredCampaigns.map((campaign) => (
+          <Card key={campaign.id} className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <Target className="h-4 w-4" />
+                    <CardTitle className="font-serif">{campaign.name}</CardTitle>
+                  </div>
+                  {getStatusBadge(campaign.status)}
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  {campaign.status === "running" && (
+                    <Button size="sm" variant="outline" onClick={() => handleStopCampaign(campaign.id)}>
+                      <Pause className="h-4 w-4 mr-1" />
+                      Pause
                     </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => handleViewDetails(campaign)}>
-                      <Eye className="mr-2 h-4 w-4" />
-                      Voir détails
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => handleCampaignAction(campaign.id, campaign.status === "running" ? "stop" : "start")}
-                      disabled={campaign.status === "completed" || campaign.status === "failed"}
-                    >
-                      {campaign.status === "running" ? (
-                        <>
-                          <Pause className="mr-2 h-4 w-4" />
-                          Arrêter campagne
-                        </>
-                      ) : (
-                        <>
-                          <Play className="mr-2 h-4 w-4" />
-                          Démarrer campagne
-                        </>
-                      )}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem disabled={campaign.status === "pending"}>
-                      <Download className="mr-2 h-4 w-4" />
-                      Exporter résultats
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  )}
+                  {campaign.status === "paused" && (
+                    <Button size="sm" variant="outline" onClick={() => handleStartCampaign(campaign.id)}>
+                      <Play className="h-4 w-4 mr-1" />
+                      Reprendre
+                    </Button>
+                  )}
+                  {campaign.status === "draft" && (
+                    <Button size="sm" variant="outline" onClick={() => handleStartCampaign(campaign.id)}>
+                      <Play className="h-4 w-4 mr-1" />
+                      Démarrer
+                    </Button>
+                  )}
+                  <Button size="sm" variant="ghost">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
+
+              <CardDescription className="flex items-center space-x-4">
+                <span className="flex items-center">
+                  <Calendar className="h-4 w-4 mr-1" />
+                  Démarré le {new Date(campaign.startDate).toLocaleDateString("fr-FR")}
+                </span>
+                <span className="flex items-center">
+                  <Zap className="h-4 w-4 mr-1" />
+                  {campaign.agent}
+                </span>
+              </CardDescription>
             </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex flex-wrap gap-1">
-                    {campaign.target_sectors.slice(0, 2).map((sector) => (
-                      <Badge key={sector} variant="outline" className="text-xs">
-                        {sector}
-                      </Badge>
-                    ))}
-                    {campaign.target_sectors.length > 2 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{campaign.target_sectors.length - 2} more
-                      </Badge>
-                    )}
-                  </div>
 
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      {getStatusBadge(campaign.status)}
-                      <span className="text-sm text-muted-foreground">{Math.round(progress)}%</span>
-                    </div>
-                    <Progress value={progress} className="h-2" />
-                  </div>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-primary">{campaign.prospects}</div>
+                  <div className="text-sm text-muted-foreground">Prospects</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">{campaign.contacted}</div>
+                  <div className="text-sm text-muted-foreground">Contactés</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">{campaign.responses}</div>
+                  <div className="text-sm text-muted-foreground">Réponses</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-accent">{campaign.meetings}</div>
+                  <div className="text-sm text-muted-foreground">RDV</div>
+                </div>
+              </div>
 
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Prospects cible</span>
-                    <span className="font-medium">{campaign.prospect_count}</span>
-                  </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span>Progression</span>
+                  <span className="font-medium">{Math.round((campaign.contacted / campaign.prospects) * 100)}%</span>
+                </div>
+                <Progress value={(campaign.contacted / campaign.prospects) * 100} className="h-2" />
 
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Trouvés</span>
-                    <span className="font-medium">{campaign.results_summary?.prospects_found || 0}</span>
-                  </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center">
+                    <TrendingUp className="h-4 w-4 mr-1 text-green-500" />
+                    Taux de conversion
+                  </span>
+                  <span className="font-medium text-green-600">{campaign.conversionRate}%</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Créée</span>
-                    <span className="font-medium">{new Date(campaign.created_at).toLocaleDateString('fr-FR')}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
+      {filteredCampaigns.length === 0 && (
+        <Card className="text-center py-12">
+          <CardContent>
+            <Target className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Aucune campagne trouvée</h3>
+            <p className="text-muted-foreground mb-4">
+              {searchTerm || statusFilter !== "all"
+                ? "Aucune campagne ne correspond à vos critères de recherche."
+                : "Créez votre première campagne de prospection IA."}
+            </p>
+            <Button className="bg-primary hover:bg-primary/90" onClick={() => setIsCreateDialogOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Créer une campagne
+            </Button>
+          </CardContent>
+        </Card>
       )}
-
-      <CampaignCreationModal open={isModalOpen} onOpenChange={setIsModalOpen} />
-      <CampaignDetailsModal 
-        campaign={selectedCampaign} 
-        isOpen={isDetailsModalOpen} 
-        onClose={() => setIsDetailsModalOpen(false)} 
-      />
     </div>
   )
 }
