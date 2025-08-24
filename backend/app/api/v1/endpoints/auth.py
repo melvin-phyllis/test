@@ -5,7 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-import jwt
+from jose import jwt
+from jose.exceptions import JWTError
 from passlib.context import CryptContext
 
 from app.core.database import get_db
@@ -78,7 +79,7 @@ def verify_token(token: str, token_type: str = "access") -> TokenData:
             )
         
         return TokenData(user_id=user_id)
-    except jwt.PyJWTError:
+    except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token invalide",

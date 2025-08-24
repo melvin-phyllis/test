@@ -58,16 +58,16 @@ echo "SECRET_KEY=your-secret-key-here" >> .env
 source venv/bin/activate
 
 # Lancer le serveur de développement
-python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Vérification du fonctionnement
 ```bash
 # Test de santé de l'API
-curl http://127.0.0.1:8001/health
+curl http://127.0.0.1:8000/health
 
 # Documentation interactive
-open http://127.0.0.1:8001/docs
+open http://127.0.0.1:8000/docs
 ```
 
 ## 📊 Endpoints API Principaux
@@ -124,7 +124,7 @@ open http://127.0.0.1:8001/docs
 
 ### Exemple de Création de Campagne
 ```bash
-curl -X POST "http://127.0.0.1:8001/api/v1/prospecting/campaigns" \
+curl -X POST "http://127.0.0.1:8000/api/v1/prospecting/campaigns" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Campagne Digitalisation",
@@ -139,7 +139,7 @@ curl -X POST "http://127.0.0.1:8001/api/v1/prospecting/campaigns" \
 
 ### Connexion WebSocket
 ```javascript
-const ws = new WebSocket('ws://127.0.0.1:8001/ws/campaign/{campaign_id}');
+const ws = new WebSocket('ws://127.0.0.1:8000/ws/campaign/{campaign_id}');
 
 ws.onmessage = function(event) {
     const data = JSON.parse(event.data);
@@ -157,10 +157,10 @@ ws.onmessage = function(event) {
 ### Monitoring des Agents
 ```bash
 # Statut des agents
-curl http://127.0.0.1:8001/api/v1/agents/status
+curl http://127.0.0.1:8000/api/v1/agents/status
 
 # Activités récentes
-curl http://127.0.0.1:8001/api/v1/agents/activity?limit=10
+curl http://127.0.0.1:8000/api/v1/agents/activity?limit=10
 ```
 
 ## 🛡️ Sécurité et Configuration
@@ -234,10 +234,10 @@ python test_websocket.py
 ## 📞 Support
 
 Pour toute question sur le backend :
-- Consulter la documentation API : http://127.0.0.1:8001/docs
+- Consulter la documentation API : http://127.0.0.1:8000/docs
 - Vérifier les logs en temps réel
 - Tester les endpoints avec curl ou Postman
 
-**Backend URL**: http://127.0.0.1:8001
-**API Docs**: http://127.0.0.1:8001/docs
-**Status**: http://127.0.0.1:8001/health
+**Backend URL**: http://127.0.0.1:8000
+**API Docs**: http://127.0.0.1:8000/docs
+**Status**: http://127.0.0.1:8000/health

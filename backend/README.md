@@ -9,11 +9,11 @@ Plateforme de prospection automatisée avec agents IA spécialisés pour le marc
 source venv/bin/activate
 
 # 2. Lancer le serveur
-python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-**Backend disponible sur** : http://127.0.0.1:8001
-**Documentation API** : http://127.0.0.1:8001/docs
+**Backend disponible sur** : http://127.0.0.1:8000
+**Documentation API** : http://127.0.0.1:8000/docs
 
 ## 📁 Structure du Backend
 
@@ -50,7 +50,7 @@ backend/
 
 ## 🔗 WebSockets
 
-- `ws://127.0.0.1:8001/ws/campaign/{id}` - Updates temps réel
+- `ws://127.0.0.1:8000/ws/campaign/{id}` - Updates temps réel
 
 ---
 

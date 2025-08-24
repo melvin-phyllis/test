@@ -32,7 +32,7 @@ export default function HomePage() {
               <Link href="/auth/login">Connexion Admin</Link>
             </Button>
             <Button asChild className="animate-pulse-glow">
-              <Link href="/app/dashboard">
+              <Link href="/dashboard">
                 Dashboard Live <Activity className="w-4 h-4 ml-2" />
               </Link>
             </Button>
@@ -58,7 +58,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button size="lg" className="text-lg px-8 py-6 animate-pulse-glow" asChild>
-              <Link href="/app/dashboard">
+              <Link href="/dashboard">
                 Voir le Dashboard Live <Activity className="w-5 h-5 ml-2" />
               </Link>
             </Button>
@@ -207,7 +207,7 @@ export default function HomePage() {
           </div>
           <div className="mt-8">
             <Button size="lg" className="animate-pulse-glow" asChild>
-              <Link href="/app/dashboard">
+              <Link href="/dashboard">
                 Accéder au Dashboard Complet <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </Button>
@@ -227,7 +227,7 @@ export default function HomePage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" variant="secondary" className="text-lg px-8 py-6" asChild>
-                  <Link href="/app/dashboard">
+                  <Link href="/dashboard">
                     Commencer maintenant <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>
                 </Button>

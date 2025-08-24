@@ -1,0 +1,21 @@
+{
+  "name": "Test Final Parser",
+  "product_description": "Test du parser corrigé pour extraction de prospects",
+  "target_location": "France, Côte d'Ivoire",
+  "target_sectors": ["technologie", "finance"],
+  "prospect_count": 3,
+  "config": {
+    "type": "lead-generation",
+    "priority": "medium",
+    "targetPositions": ["CEO", "Directeur"],
+    "aggressiveness": 60,
+    "useSerper": true,
+    "dailyLimit": 10,
+    "agents": {
+      "researcher": true,
+      "analyst": true,
+      "outreach": false,
+      "followUp": false
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "Test Simple Parser",
+  "product_description": "Service de test simple",
+  "target_location": "France",
+  "target_sectors": ["technologie"],
+  "prospect_count": 2,
+  "config": {
+    "type": "market-research",
+    "priority": "low",
+    "targetPositions": [],
+    "aggressiveness": 30,
+    "useSerper": false,
+    "dailyLimit": 5,
+    "agents": {
+      "researcher": true,
+      "analyst": true,
+      "outreach": false,
+      "followUp": false
+    }
+  }
+}

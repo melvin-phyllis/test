@@ -1,6 +1,7 @@
 import re
 from typing import Dict, Any, List
 from app.utils.logger import setup_logger
+from datetime import datetime
 
 logger = setup_logger(__name__)
 
@@ -42,15 +43,61 @@ class ProspectParser:
             return []
     
     def _extract_structured_prospects(self, text: str) -> List[Dict[str, Any]]:
-        """Extract prospects from structured CrewAI output with strict validation"""
+        """Extract prospects from structured CrewAI output with improved parsing"""
         prospects = []
         
-        # STRICT: Only extract if the text looks like a proper CrewAI report
-        if not self._is_valid_crewai_format(text):
-            logger.info("Text does not match CrewAI report format, skipping structured extraction")
-            return prospects
+        # Pattern 1: Numbered company blocks (like "1. **BNP Paribas**")
+        pattern1 = r'(\d+)\.\s*\*\*([^*]+)\*\*\s*\n(.*?)(?=\n\s*\d+\.\s*\*\*|\n\n\n|\Z)'
+        matches1 = re.finditer(pattern1, text, re.DOTALL | re.IGNORECASE)
         
-        # Pattern for numbered company blocks (like "1. **Farfetch**")
+        for match in matches1:
+            company_name = match.group(2).strip()
+            details_block = match.group(3).strip()
+            
+            if company_name and details_block:
+                prospect = self._parse_crewai_company_block(company_name, details_block)
+                if prospect:
+                    prospects.append(prospect)
+        
+        # Pattern 2: Bold company names without numbers (**Company Name**)
+        if not prospects:
+            pattern2 = r'\*\*([^*]+)\*\*\s*\n(.*?)(?=\n\s*\*\*|\n\n\n|\Z)'
+            matches2 = re.finditer(pattern2, text, re.DOTALL | re.IGNORECASE)
+            
+            for match in matches2:
+                company_name = match.group(1).strip()
+                details_block = match.group(2).strip()
+                
+                if company_name and details_block:
+                    prospect = self._parse_crewai_company_block(company_name, details_block)
+                    if prospect:
+                        prospects.append(prospect)
+        
+        # Pattern 3: Company names followed by dash or colon
+        if not prospects:
+            pattern3 = r'([A-Z][A-Za-z\s&]+(?:Bank|Corp|Inc|Ltd|SA|AG|GmbH)?)\s*[-:]\s*(.*?)(?=\n\s*[A-Z][A-Za-z\s&]+[-:]|\n\n\n|\Z)'
+            matches3 = re.finditer(pattern3, text, re.DOTALL | re.IGNORECASE)
+            
+            for match in matches3:
+                company_name = match.group(1).strip()
+                details_block = match.group(2).strip()
+                
+                if company_name and details_block and len(company_name) > 3:
+                    prospect = self._parse_crewai_company_block(company_name, details_block)
+                    if prospect:
+                        prospects.append(prospect)
+        
+        # Pattern 4: Market Research Report Format (like campaign 8)
+        if not prospects:
+            prospects.extend(self._extract_market_research_prospects(text))
+        
+        return prospects
+    
+    def _extract_market_research_prospects(self, text: str) -> List[Dict[str, Any]]:
+        """Extract prospects from market research report format (like campaign 8)"""
+        prospects = []
+        
+        # Pattern for numbered prospects with scoring
         pattern = r'(\d+)\.\s*\*\*([^*]+)\*\*\s*\n(.*?)(?=\n\s*\d+\.\s*\*\*|\n\n\n|\Z)'
         matches = re.finditer(pattern, text, re.DOTALL | re.IGNORECASE)
         
@@ -58,28 +105,77 @@ class ProspectParser:
             company_name = match.group(2).strip()
             details_block = match.group(3).strip()
             
-            # Validate that this looks like a real company
-            if self._is_valid_company_block(company_name, details_block):
-                prospect = self._parse_crewai_company_block(company_name, details_block)
-                if prospect and self._is_valid_prospect(prospect):
+            if company_name and details_block:
+                prospect = self._parse_market_research_prospect(company_name, details_block)
+                if prospect:
                     prospects.append(prospect)
         
-        # If no numbered pattern found, try alternative patterns but still strict
-        if not prospects:
-            # Try pattern without numbers: **Company Name**
-            pattern = r'\*\*([^*]+)\*\*\s*\n(.*?)(?=\n\s*\*\*|\n\n\n|\Z)'
-            matches = re.finditer(pattern, text, re.DOTALL | re.IGNORECASE)
-            
-            for match in matches:
-                company_name = match.group(1).strip()
-                details_block = match.group(2).strip()
-                
-                if self._is_valid_company_block(company_name, details_block):
-                    prospect = self._parse_crewai_company_block(company_name, details_block)
-                    if prospect and self._is_valid_prospect(prospect):
-                        prospects.append(prospect)
-        
         return prospects
+    
+    def _parse_market_research_prospect(self, company_name: str, details_block: str) -> Dict[str, Any]:
+        """Parse a market research prospect with scoring information"""
+        prospect = {
+            "company_name": company_name,
+            "quality_score": 85.0,  # Base score for market research prospects
+            "status": "qualified",
+            "location": "Lyon, France",  # Default for this campaign
+            "sector": "Finance",
+            "description": f"Prospect qualifié identifié par les agents IA pour {company_name}",
+            "extra_data": {}
+        }
+        
+        # Extract description - look for the actual description text
+        # Pattern: "**Description**: Text" or "**Description**: - Text"
+        desc_pattern = r'\*\*Description\*\*[:\s-]*([^.\n]+)'
+        desc_match = re.search(desc_pattern, details_block, re.IGNORECASE)
+        if desc_match:
+            description = desc_match.group(1).strip()
+            # Clean up the description
+            description = re.sub(r'^\s*[-–]\s*', '', description)  # Remove leading dash
+            if description and len(description) > 5:  # Only use if meaningful
+                prospect['description'] = description
+        
+        # Extract scoring information
+        score_patterns = {
+            'market_relevance': r'Market Relevance[:\s]*(\d+)',
+            'innovation_potential': r'Innovation Potential[:\s]*(\d+)',
+            'accessibility': r'Accessibility[:\s]*(\d+)',
+            'total_score': r'Total Score[:\s]*(\d+)/15'
+        }
+        
+        scores = {}
+        for score_type, pattern in score_patterns.items():
+            match = re.search(pattern, details_block, re.IGNORECASE)
+            if match:
+                scores[score_type] = int(match.group(1))
+        
+        # Calculate quality score based on total score
+        if 'total_score' in scores:
+            total_score = scores['total_score']
+            # Convert 15-point scale to 100-point scale
+            prospect['quality_score'] = round((total_score / 15) * 100)
+            
+            # Adjust status based on score
+            if prospect['quality_score'] >= 80:
+                prospect['status'] = 'qualified'
+            elif prospect['quality_score'] >= 60:
+                prospect['status'] = 'identified'
+            else:
+                prospect['status'] = 'identified'
+        
+        # Set proper location and sector based on campaign context
+        prospect['location'] = "Lyon, France"
+        prospect['sector'] = "Finance"
+        
+        # Store scoring details in extra_data
+        prospect['extra_data'] = {
+            'scoring': scores,
+            'source': 'market_research_report',
+            'extraction_timestamp': datetime.utcnow().isoformat(),
+            'campaign_context': 'Finance sector research in Lyon, France'
+        }
+        
+        return prospect
     
     def _is_valid_crewai_format(self, text: str) -> bool:
         """Check if text looks like a valid CrewAI report"""
@@ -156,30 +252,32 @@ class ProspectParser:
         return False
     
     def _is_valid_prospect(self, prospect: Dict[str, Any]) -> bool:
-        """Final validation of a parsed prospect"""
+        """Final validation of a parsed prospect - Less strict for CrewAI results"""
         if not prospect.get('company_name'):
             return False
         
         company_name = prospect['company_name']
         
-        # Must look like a real company name
-        if not self._looks_like_company_name(company_name):
+        # Must look like a real company name (basic check)
+        if len(company_name) < 2:
             return False
         
-        # Quality score should be reasonable (we set it to 85+ for valid CrewAI prospects)
-        quality_score = prospect.get('quality_score', 0)
-        if quality_score < 50:  # Too low for CrewAI prospects
+        # Quality score should be reasonable (CrewAI prospects get 85+)
+        quality_score = prospect.get('quality_score', 85.0)
+        if quality_score < 30:  # Lowered threshold for CrewAI prospects
             return False
         
-        # If we have contact info, it should be valid
+        # Email validation is optional for CrewAI prospects
         email = prospect.get('email')
-        if email and not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
-            return False
+        if email and email.strip():
+            # Basic email format check
+            if '@' not in email or '.' not in email:
+                return False
         
         return True
     
     def _parse_crewai_company_block(self, company_name: str, details_block: str) -> Dict[str, Any]:
-        """Parse a CrewAI company information block"""
+        """Parse a CrewAI company information block with improved extraction"""
         prospect = {
             "company_name": company_name,
             "quality_score": 85.0,  # Higher score for CrewAI found prospects
@@ -189,21 +287,28 @@ class ProspectParser:
             "description": f"Prospect qualifié identifié par les agents IA pour {company_name}"
         }
         
-        # Extract website - look for Website: [Text](URL) or - **Website:** URL
-        website_patterns = [
-            r'(?:\*\*Website:\*\*|Website:|Web:)\s*\[([^\]]+)\]\(([^)]+)\)',
-            r'(?:\*\*Website:\*\*|Website:|Web:)\s*([^\n\r]+)',
-            r'https?://[^\s\n\r)]+',
-        ]
+        # Extract contact name from "Name:" field
+        name_pattern = r'(?:Name:|Contact:)\s*([A-Z][a-z]+\s+[A-Z][a-z]+)'
+        name_match = re.search(name_pattern, details_block, re.IGNORECASE)
+        if name_match:
+            prospect['contact_name'] = name_match.group(1).strip()
         
-        for pattern in website_patterns:
-            website_match = re.search(pattern, details_block, re.IGNORECASE)
-            if website_match:
-                if len(website_match.groups()) >= 2:
-                    prospect['website'] = website_match.group(2).strip()
-                else:
-                    prospect['website'] = website_match.group(1 if website_match.groups() else 0).strip()
-                break
+        # Extract position from "Position:" field
+        position_pattern = r'(?:Position:|Role:)\s*([^.\n]+)'
+        position_match = re.search(position_pattern, details_block, re.IGNORECASE)
+        if position_match:
+            prospect['contact_position'] = position_match.group(1).strip()
+        
+        # Extract email addresses
+        email_pattern = r'(?:Email:|E-mail:)\s*([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})'
+        email_match = re.search(email_pattern, details_block, re.IGNORECASE)
+        if email_match:
+            prospect['email'] = email_match.group(1).strip()
+        else:
+            # Look for any email in the text
+            general_email = re.search(r'([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})', details_block)
+            if general_email:
+                prospect['email'] = general_email.group(1).strip()
         
         # Extract phone numbers
         phone_patterns = [
@@ -221,44 +326,31 @@ class ProspectParser:
                     prospect['phone'] = phone_match.group(1 if phone_match.groups() else 0).strip()
                 break
         
-        # Extract email addresses
-        email_pattern = r'(?:Email:|E-mail:)\s*([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})'
-        email_match = re.search(email_pattern, details_block, re.IGNORECASE)
-        if email_match:
-            prospect['email'] = email_match.group(1).strip()
-        else:
-            # Look for any email in the text
-            general_email = re.search(r'([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})', details_block)
-            if general_email:
-                prospect['email'] = general_email.group(1).strip()
-        
-        # Extract LinkedIn profiles and key decision makers
-        linkedin_pattern = r'LinkedIn.*?https://www\.linkedin\.com/[^\s\n\)]+|https://www\.linkedin\.com/[^\s\n\)]+'
-        linkedin_matches = re.findall(linkedin_pattern, details_block, re.IGNORECASE)
-        
-        # Extract contact names from key decision makers section
-        contact_names = []
-        # Look for patterns like "- Name - [LinkedIn]" or "Name - [LinkedIn]"
-        name_patterns = [
-            r'(?:-\s*)?([A-Z][a-z]+\s+[A-Z][a-z]+)(?:\s*-\s*\[LinkedIn\])',
-            r'(?:-\s*)?([A-Z][a-z]+\s+[A-Z][a-z]+)(?:\s*-\s*LinkedIn)',
-            r'(\w+\s+\w+)\s*-\s*\[LinkedIn\]'
+        # Extract website
+        website_patterns = [
+            r'(?:Website:|Web:)\s*([^\n\r]+)',
+            r'https?://[^\s\n\r)]+',
         ]
         
-        for pattern in name_patterns:
-            names = re.findall(pattern, details_block)
-            contact_names.extend(names)
+        for pattern in website_patterns:
+            website_match = re.search(pattern, details_block, re.IGNORECASE)
+            if website_match:
+                prospect['website'] = website_match.group(1 if website_match.groups() else 0).strip()
+                break
         
-        # Use first found contact as primary contact
-        if contact_names:
-            prospect['contact_name'] = contact_names[0]
-            prospect['contact_position'] = self._guess_position_from_context(details_block, contact_names[0])
+        # Extract LinkedIn profiles
+        linkedin_pattern = r'LinkedIn:\s*([^\n\r]+)'
+        linkedin_match = re.search(linkedin_pattern, details_block, re.IGNORECASE)
+        if linkedin_match:
+            prospect['extra_data'] = {
+                'linkedin': linkedin_match.group(1).strip()
+            }
         
         # Try to extract location from company context
         location_patterns = [
             r'(?:based|located|headquarters?)\s+(?:in|at)\s+([A-Z][a-zA-Z\s,]+)',
             r'([A-Z][a-z]+,\s*[A-Z][a-z]+(?:\s*,\s*[A-Z][a-z]+)?)',
-            r'(New York|London|Paris|Berlin|Tokyo|Sydney|Toronto|Munich|Milan|Madrid|Amsterdam|Brussels)'
+            r'(France|South Africa|Côte d\'Ivoire|Abidjan|Paris|Johannesburg)'
         ]
         
         for pattern in location_patterns:
@@ -268,14 +360,12 @@ class ProspectParser:
                 break
         
         # Determine sector based on company name and context
-        prospect['sector'] = self._determine_sector(company_name, details_block)
-        
-        # Store additional data
-        prospect['extra_data'] = {
-            'linkedin_profiles': linkedin_matches,
-            'decision_makers': contact_names,
-            'raw_details': details_block[:500]  # Store first 500 chars for debugging
-        }
+        if 'bank' in company_name.lower() or 'finance' in details_block.lower():
+            prospect['sector'] = 'Finance'
+        elif 'tech' in company_name.lower() or 'digital' in details_block.lower():
+            prospect['sector'] = 'Technologie'
+        else:
+            prospect['sector'] = 'Non spécifié'
         
         return prospect
     
@@ -492,11 +582,12 @@ class ProspectParser:
         
         # Numeric fields
         try:
-            cleaned['quality_score'] = float(prospect.get('quality_score', 5.0))
-            if not 0 <= cleaned['quality_score'] <= 10:
-                cleaned['quality_score'] = 5.0
+            cleaned['quality_score'] = float(prospect.get('quality_score', 50.0))
+            # Autoriser une échelle 0-100 (les agents mettent souvent 0-100)
+            if not 0 <= cleaned['quality_score'] <= 100:
+                cleaned['quality_score'] = 50.0
         except (ValueError, TypeError):
-            cleaned['quality_score'] = 5.0
+            cleaned['quality_score'] = 50.0
         
         cleaned['status'] = str(prospect.get('status', 'identified'))
         

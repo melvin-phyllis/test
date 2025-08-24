@@ -1,0 +1,21 @@
+{
+  "name": "Test Prospection Tech CI",
+  "product_description": "Solutions de digitalisation et transformation numérique pour entreprises ivoiriennes",
+  "target_location": "Côte d'Ivoire, Abidjan",
+  "target_sectors": ["technologie", "finance", "commerce", "industrie"],
+  "prospect_count": 5,
+  "config": {
+    "type": "lead-generation",
+    "priority": "high",
+    "targetPositions": ["CEO", "Directeur", "Manager"],
+    "aggressiveness": 80,
+    "useSerper": true,
+    "dailyLimit": 10,
+    "agents": {
+      "researcher": true,
+      "analyst": true,
+      "outreach": true,
+      "followUp": true
+    }
+  }
+}

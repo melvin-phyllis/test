@@ -1,0 +1,17 @@
+# Configuration Frontend AI Agent Prospecting Platform
+# ==================================================
+
+# API Backend URL
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+
+# WebSocket Backend URL
+NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
+
+# Environment
+NODE_ENV=development
+
+# API Keys (optionnel pour le frontend)
+SERPER_API_KEY=votre-cle-serper-ici
+
+# Port (optionnel, Next.js utilise 3000 par défaut)
+PORT=3001

@@ -30,7 +30,7 @@ export default function AdminLoginPage() {
       await authManager.login({ email, password })
       
       // Rediriger vers le dashboard
-      router.push("/app/dashboard")
+              router.push("/dashboard")
       
     } catch (error) {
       // L'erreur est déjà gérée par le AuthManager et ErrorHandler

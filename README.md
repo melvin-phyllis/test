@@ -20,14 +20,15 @@ backend/
 ```bash
 cd backend
 source venv/bin/activate
-python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
-**URL** : http://127.0.0.1:8001
+**URL** : http://127.0.0.1:8000
 
 ### 🎨 Frontend  
 ```
 frontend/
-├── src/                   # Code source React
+├── app/                   # Next.js App Router
+├── components/            # Composants React
 ├── public/                # Fichiers statiques
 ├── package.json           # Dépendances NPM
 └── README.md              # Documentation frontend
@@ -36,10 +37,10 @@ frontend/
 **Démarrage** :
 ```bash
 cd frontend  
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
-**URL** : http://localhost:3002/
+**URL** : http://localhost:3000/
 
 ## 🚀 Démarrage Rapide
 
@@ -47,20 +48,20 @@ npm run dev
 ```bash
 cd backend
 source venv/bin/activate  
-python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### 2. Frontend (Terminal 2)
 ```bash
 cd frontend
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 ### 3. Accès
-- **Frontend** : http://localhost:3002/
-- **Backend API** : http://127.0.0.1:8001
-- **API Docs** : http://127.0.0.1:8001/docs
+- **Frontend** : http://localhost:3000/
+- **Backend API** : http://127.0.0.1:8000
+- **API Docs** : http://127.0.0.1:8000/docs
 
 ## 🤖 Fonctionnalités
 
@@ -77,14 +78,14 @@ npm run dev
 
 ### Technologies
 - **Backend** : FastAPI, CrewAI, SQLAlchemy, WebSockets
-- **Frontend** : React 18, TypeScript, Tailwind CSS, Vite
+- **Frontend** : Next.js (React 18), TypeScript, Tailwind CSS
 - **Base de Données** : SQLite (dev) / PostgreSQL (prod)
 
 ## 📊 Test Rapide
 
 ### Créer une campagne
 ```bash
-curl -X POST "http://127.0.0.1:8001/api/v1/prospecting/campaigns" \\
+curl -X POST "http://127.0.0.1:8000/api/v1/prospecting/campaigns" \\
   -H "Content-Type: application/json" \\
   -d '{
     "name": "Test Campagne",
@@ -96,7 +97,7 @@ curl -X POST "http://127.0.0.1:8001/api/v1/prospecting/campaigns" \\
 
 ### Démarrer la campagne
 ```bash
-curl -X POST "http://127.0.0.1:8001/api/v1/prospecting/campaigns/1/start"
+curl -X POST "http://127.0.0.1:8000/api/v1/prospecting/campaigns/1/start"
 ```
 
 Les agents IA vont automatiquement :
@@ -109,7 +110,7 @@ Les agents IA vont automatiquement :
 
 - **Backend** : [backend/README.md](backend/README.md)
 - **Frontend** : [frontend/README.md](frontend/README.md)
-- **Documentation API** : http://127.0.0.1:8001/docs
+- **Documentation API** : http://127.0.0.1:8000/docs
 
 ## 🔧 Architecture
 
@@ -117,7 +118,7 @@ Les agents IA vont automatiquement :
 ┌─────────────────┐    HTTP/WS     ┌─────────────────┐
 │                 │ ◄─────────────► │                 │
 │  React Frontend │                │  FastAPI Backend│
-│  (Port 3002)    │                │  (Port 8001)    │
+│  (Port 3000)    │                │  (Port 8000)    │
 │                 │                │                 │
 └─────────────────┘                └─────────────────┘
                                            │
@@ -151,6 +152,6 @@ Les agents IA vont automatiquement :
 **La plateforme est prête à l'usage !** 🎉
 
 Pour toute question :
-- Consulter la doc API : http://127.0.0.1:8001/docs
+- Consulter la doc API : http://127.0.0.1:8000/docs
 - Vérifier les logs en temps réel
 - Tester les WebSockets temps réel

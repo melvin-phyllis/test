@@ -8,20 +8,21 @@ Ce guide vous permet de déployer la plateforme complète (backend + frontend) e
 
 ```bash
 # Démarrer backend + frontend automatiquement
-./start_dev.sh
+./scripts/start_dev.sh
 ```
 
 ### Option 2: Démarrage manuel
 
 ```bash
 # 1. Backend (Terminal 1)
+cd backend
 source venv/bin/activate
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 # 2. Frontend (Terminal 2)
 cd frontend
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 ### Option 3: Docker Compose
@@ -72,12 +73,12 @@ DEBUG=true
 
 ### 2. Configuration Frontend
 
-Le frontend utilise le proxy Vite pour se connecter au backend automatiquement.
+Le frontend est basé sur Next.js (App Router).
 
 Variables d'environnement frontend (optionnel):
 ```bash
-VITE_API_URL=http://localhost:8000
-VITE_WS_URL=ws://localhost:8000
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
 ```
 
 ## 🏗️ Installation Complète
@@ -386,7 +387,7 @@ alembic current
 
 **Frontend ne se connecte pas:**
 ```bash
-# Vérifier le proxy Vite
+# Vérifier la configuration des URLs (NEXT_PUBLIC_API_URL)
 # Vérifier les CORS du backend
 # Tester l'API directement: curl http://localhost:8000/health
 ```

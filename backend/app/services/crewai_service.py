@@ -144,6 +144,14 @@ class CrewAIService:
             result = await asyncio.get_event_loop().run_in_executor(
                 None, crew_manager.run_prospecting_campaign, inputs
             )
+            # Sauvegarder le résultat brut pour debug
+            try:
+                raw_dir = project_root / "data"
+                raw_dir.mkdir(parents=True, exist_ok=True)
+                (raw_dir / f"campaign_{campaign_id}_raw.txt").write_text(str(result))
+                logger.info(f"Saved raw CrewAI result for campaign {campaign_id}")
+            except Exception as e:
+                logger.error(f"Could not save raw result for campaign {campaign_id}: {e}")
             
             # Process and save results
             await self._process_campaign_results(campaign_id, result)

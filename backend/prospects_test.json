@@ -1,0 +1,30 @@
+[
+  {
+    "campaign_id": 5,
+    "company_name": "BNP Paribas",
+    "contact_name": "Sophie Martin",
+    "contact_position": "Directrice Innovation",
+    "email": "sophie.martin@bnpparibas.com",
+    "phone": "+33 1 40 14 45 46",
+    "website": "bnpparibas.com",
+    "sector": "Finance",
+    "location": "France",
+    "quality_score": 85.0,
+    "status": "qualified",
+    "description": "Banque française leader en innovation digitale"
+  },
+  {
+    "campaign_id": 5,
+    "company_name": "Standard Bank",
+    "contact_name": "À déterminer",
+    "contact_position": "Contact à établir",
+    "email": "",
+    "phone": "",
+    "website": "standardbank.com",
+    "sector": "Finance",
+    "location": "Afrique du Sud",
+    "quality_score": 75.0,
+    "status": "identified",
+    "description": "Banque africaine majeure, contact à établir via LinkedIn"
+  }
+]

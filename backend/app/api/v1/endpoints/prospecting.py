@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, delete
+from sqlalchemy import select, func, delete, update
 from typing import List, Optional
 from pydantic import ValidationError
 import csv
@@ -16,9 +16,12 @@ from app.models.campaign import Campaign, CampaignStatus
 from app.models.prospect import Prospect
 from app.services.crewai_service import crewai_service
 from app.utils.logger import setup_logger
+from app.services.prospect_parser import ProspectParser
+from pathlib import Path
 
 router = APIRouter()
 logger = setup_logger(__name__)
+parser = ProspectParser()
 
 @router.post("/campaigns", response_model=CampaignResponse)
 async def create_campaign(
@@ -336,13 +339,15 @@ async def export_campaign(
             
         elif format == "csv":
             output = io.StringIO()
-            if prospects:
-                fieldnames = ["company_name", "website", "sector", "location", "contact_name", 
-                             "contact_position", "email", "phone", "quality_score", "status", "created_at"]
-                writer = csv.DictWriter(output, fieldnames=fieldnames)
-                writer.writeheader()
-                for prospect_data in campaign_data["prospects"]:
-                    writer.writerow(prospect_data)
+            fieldnames = [
+                "company_name", "website", "sector", "location", "contact_name",
+                "contact_position", "email", "phone", "quality_score", "status", "created_at"
+            ]
+            writer = csv.DictWriter(output, fieldnames=fieldnames)
+            # Toujours écrire l'en-tête même si aucun prospect (fichier non vide)
+            writer.writeheader()
+            for prospect_data in campaign_data["prospects"]:
+                writer.writerow(prospect_data)
             content = output.getvalue()
             media_type = "text/csv"
             filename = f"campaign_{campaign_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
@@ -364,3 +369,53 @@ async def export_campaign(
         logger.error(f"Error exporting campaign {campaign_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@router.post("/campaigns/{campaign_id}/reparse")
+async def reparse_campaign_results(
+    campaign_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    """Reparser et enregistrer les prospects depuis le résultat brut sauvegardé"""
+    try:
+        # Vérifier campagne
+        result = await db.execute(select(Campaign).where(Campaign.id == campaign_id))
+        campaign = result.scalar_one_or_none()
+        if not campaign:
+            raise HTTPException(status_code=404, detail="Campaign not found")
+
+        raw_path = Path("data") / f"campaign_{campaign_id}_raw.txt"
+        if not raw_path.exists():
+            raise HTTPException(status_code=404, detail="Raw result file not found for this campaign")
+
+        content = raw_path.read_text(encoding="utf-8", errors="ignore")
+        prospects_data = await parser.parse_crewai_result(content)
+
+        saved = 0
+        for p in prospects_data:
+            prospect = Prospect(campaign_id=campaign_id, **p)
+            db.add(prospect)
+            saved += 1
+        await db.commit()
+
+        # Mettre à jour le résumé
+        await db.execute(
+            update(Campaign)
+            .where(Campaign.id == campaign_id)
+            .values(
+                results_summary={
+                    **(campaign.results_summary or {}),
+                    "prospects_found": (campaign.results_summary or {}).get("prospects_found", 0) + saved,
+                    "reparsed": True,
+                }
+            )
+        )
+        await db.commit()
+
+        logger.info(f"Reparsed {saved} prospects for campaign {campaign_id}")
+        return {"campaign_id": campaign_id, "parsed": saved}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error reparsing campaign {campaign_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
