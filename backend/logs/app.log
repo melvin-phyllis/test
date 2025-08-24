@@ -935,3 +935,5 @@ AttributeError: 'ConnectionManager' object has no attribute 'broadcast'
 2025-08-22 19:19:34 | INFO | app.main | Global WebSocket client disconnected
 2025-08-22 19:19:59 | INFO | app.services.websocket_manager | Client disconnected from campaign None
 2025-08-22 19:19:59 | INFO | app.main | Global WebSocket client disconnected
+2025-08-24 19:24:58 | INFO | app.main | Starting AI Agent Prospecting Platform...
+2025-08-24 19:24:58 | INFO | app.main | Database initialized
